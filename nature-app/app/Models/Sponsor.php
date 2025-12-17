@@ -17,7 +17,7 @@ class Sponsor extends Model
 
 
 
-    protected $fillable = ['name', 'logo'];
+    protected $fillable = ['name', 'logo','award_id'];
 
     public $translatable = ['name'];
 

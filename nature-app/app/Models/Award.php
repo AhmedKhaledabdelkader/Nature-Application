@@ -51,7 +51,7 @@ class Award extends Model
     }
 
 
-    public function sponser()
+    public function sponsors()
     {
         return $this->hasMany(Sponsor::class);
     }

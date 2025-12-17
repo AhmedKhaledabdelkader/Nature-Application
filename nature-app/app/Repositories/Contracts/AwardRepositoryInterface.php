@@ -13,6 +13,10 @@ interface AwardRepositoryInterface
 
   //  public function update(string $id, array $data);
 
-  //  public function delete(string $id);
+    public function delete(string $id);
+
+
     
+public function findWithSponsors(string $id);
+
 }

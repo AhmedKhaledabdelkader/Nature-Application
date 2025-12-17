@@ -139,12 +139,17 @@ class AwardService
         return $this->awardRepository->all($page, $size);
     }
 
+    public function getAwardById(string $id)
+    {
+        return $this->awardRepository->findWithSponsors($id);
+    }
 
 
 
 
 
- /*   public function deleteAward(string $id)
+
+    public function deleteAward(string $id)
     {
         $award = $this->awardRepository->find($id);
         
@@ -169,7 +174,7 @@ class AwardService
         
         return $this->awardRepository->delete($id);
     }
-*/
+
 
 
 

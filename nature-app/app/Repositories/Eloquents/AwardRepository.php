@@ -18,10 +18,27 @@ class AwardRepository implements AwardRepositoryInterface
         return Award::find($id);
     }
 
+public function findWithSponsors(string $id)
+{
+    return Award::with('sponsors')->find($id);
+}
+
+
     public function all($page, $size)
     {
  
          return Award::query()->paginate($size,['*'],'page',$page);
+    }
+
+    public function delete(string $id): bool
+    {
+        $award = Award::find($id);
+
+        if ($award) {
+            return $award->delete();
+        }
+
+        return false;
     }
    
 }

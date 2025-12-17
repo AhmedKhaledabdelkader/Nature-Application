@@ -10,3 +10,7 @@ Route::post('/{id}', [AwardController::class, 'update'])->middleware(["localize"
 
 Route::get('/', [AwardController::class, 'index'])->middleware("localize");
 
+Route::get('/{id}', [AwardController::class, 'show'])->middleware("localize");
+
+Route::delete('/{id}', [AwardController::class, 'destroy']);
+

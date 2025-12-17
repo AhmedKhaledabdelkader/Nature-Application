@@ -66,6 +66,54 @@ class AwardController extends Controller
     }
 
 
+    
+    public function destroy(string $id)
+    {
+        $deleted = $this->awardService->deleteAward($id);
+
+        if (!$deleted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'award not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Award deleted successfully'
+        ]);
+    }
+
+public function show(string $id)
+    {
+
+    $award = $this->awardService->getAwardById($id);
+
+
+        if (!$award) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Award not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Award retrieved successfully',
+            'result' => new AwardResource($award)
+        ], 200);
+    
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

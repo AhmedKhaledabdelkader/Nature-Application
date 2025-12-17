@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'validate.pagination' => \App\Http\Middleware\ValidatePaginationMiddleware::class,
             'validate.city'=>\App\Http\Middleware\ValidateCity::class,
             'validate.award'=>\App\Http\Middleware\ValidateAward::class,
+            'validate.sponsor'=>\App\Http\Middleware\ValidateSponsor::class,
              
         ]);
 

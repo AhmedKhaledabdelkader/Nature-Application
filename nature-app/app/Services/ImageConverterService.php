@@ -2,37 +2,26 @@
 
 namespace App\Services;
 
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Storage;
+
+
 
 class ImageConverterService
 {
+    public function convertAndStore($image, string $directory): string
+    {
+        $manager = new ImageManager(new Driver());
 
-    public function convertAndStore(
-        $image,
-        string $directory,
-        int $quality = 90
-    ): string {
+        $img = $manager->read($image);
+
         $filename = uniqid() . '.webp';
         $path = $directory . '/' . $filename;
 
-        $imageResource = imagecreatefromstring(
-            file_get_contents($image->getRealPath())
-        );
+        $webp = $img->toWebp(90);
 
-        if ($imageResource === false) {
-            throw new \Exception('Failed to create image resource');
-        }
-
-        $tempPath = sys_get_temp_dir() . '/' . $filename;
-
-        imagewebp($imageResource, $tempPath, $quality);
-
-        Storage::disk('private')->put(
-            $path,
-            file_get_contents($tempPath)
-        );
-
-        unlink($tempPath);
+        Storage::disk('private')->put($path, $webp);
 
         return $path;
     }
