@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\CountryRepositoryInterface;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
@@ -16,7 +17,7 @@ class CountryService
 
     public $countryRepository;
     
-    public function __construct(CountryRepository $countryRepository,protected ImageConverterService $imageConverterService)
+    public function __construct(CountryRepositoryInterface $countryRepository,protected ImageConverterService $imageConverterService)
     {
         $this->countryRepository = $countryRepository;
     }

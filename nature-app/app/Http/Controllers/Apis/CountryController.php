@@ -62,7 +62,8 @@ public function index(Request $request)
         return response()->json([
             'status' => 'success',
             'message' => 'Countries retrieved successfully',
-            'result' => CountryResource::collection($countries)
+            'result' => CountryResource::collection($countries),
+ 
         ], 200);
     }
 

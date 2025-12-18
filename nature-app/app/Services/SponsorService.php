@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\SponsorRepositoryInterface;
 use App\Repositories\Eloquents\SponsorRepository;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -10,7 +11,7 @@ class SponsorService
 {
     public $sponsorRepository;
 
-    public function __construct(SponsorRepository $sponsorRepository,protected ImageConverterService $imageConverterService)
+    public function __construct(SponsorRepositoryInterface $sponsorRepository,protected ImageConverterService $imageConverterService)
     {
         $this->sponsorRepository = $sponsorRepository;
     }

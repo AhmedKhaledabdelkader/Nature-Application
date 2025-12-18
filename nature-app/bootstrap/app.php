@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'validate.city'=>\App\Http\Middleware\ValidateCity::class,
             'validate.award'=>\App\Http\Middleware\ValidateAward::class,
             'validate.sponsor'=>\App\Http\Middleware\ValidateSponsor::class,
+             'validate.client'=>\App\Http\Middleware\ValidateClient::class,
+             'validate.service'=>\App\Http\Middleware\ValidateService::class,
+
              
         ]);
 

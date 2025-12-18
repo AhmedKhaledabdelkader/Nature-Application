@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\AwardRepositoryInterface;
 use App\Repositories\Eloquents\AwardRepository;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +13,7 @@ class AwardService
 
     public $awardRepository;
     
-    public function __construct(AwardRepository $awardRepository,protected ImageConverterService $imageConverterService)
+    public function __construct(AwardRepositoryInterface $awardRepository,protected ImageConverterService $imageConverterService)
     {
         $this->awardRepository = $awardRepository;
         

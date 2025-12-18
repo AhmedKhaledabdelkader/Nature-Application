@@ -8,7 +8,7 @@ Route::post('/', [AwardController::class, 'store'])->middleware(["validate.award
 
 Route::post('/{id}', [AwardController::class, 'update'])->middleware(["localize"]);
 
-Route::get('/', [AwardController::class, 'index'])->middleware("localize");
+Route::get('/', [AwardController::class, 'index'])->middleware(["validate.pagination","localize"]);
 
 Route::get('/{id}', [AwardController::class, 'show'])->middleware("localize");
 

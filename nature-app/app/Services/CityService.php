@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\CityRepositoryInterface;
 use App\Repositories\Eloquents\CityRepository;
 use Illuminate\Support\Facades\App;
 
@@ -12,7 +13,7 @@ class CityService
 
 
 
-    public function __construct(CityRepository $cityRepository)
+    public function __construct(CityRepositoryInterface $cityRepository)
     {
         $this->cityRepository = $cityRepository;
     }
