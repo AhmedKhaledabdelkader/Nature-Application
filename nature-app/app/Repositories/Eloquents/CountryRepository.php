@@ -15,9 +15,9 @@ class CountryRepository implements CountryRepositoryInterface
 
 
     public function find(string $id)
-    {
-        return Country::find($id);
-    }
+{
+    return Country::with('projects.city')->find($id);
+}
 
 
     public function all($page,$size)

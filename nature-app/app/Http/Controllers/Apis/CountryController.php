@@ -39,7 +39,7 @@ public function show(string $id)
 
     $country = $this->countryService->getCountryById($id);
 
-
+       
         if (!$country) {
             return response()->json([
                 'status' => 'error',

@@ -20,4 +20,6 @@ Route::prefix('clients')->group(base_path('routes/apis/client.php'));
 
 Route::prefix('services')->group(base_path('routes/apis/service.php'));
 
+Route::prefix('projects')->group(base_path('routes/Apis/project.php'));
+
 Route::prefix('media')->group(base_path('routes/Apis/media.php'));

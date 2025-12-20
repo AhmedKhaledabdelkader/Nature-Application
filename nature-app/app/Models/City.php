@@ -47,5 +47,12 @@ class City extends Model
         return $this->belongsTo(Country::class);
     }
 
+      public function project()
+    {
+        return $this->hasMany(Project::class);
+    }
+    
+
+
     
 }

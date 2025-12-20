@@ -18,6 +18,7 @@ class CountryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name, 
             'logo' => $this->logo,
+            'projects' => ProjectResource::collection($this->whenLoaded('projects')),
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
