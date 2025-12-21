@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ServiceResource extends JsonResource
+class StepResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,20 +14,17 @@ class ServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-
-           return [
+        
+         return [
             'id' => $this->id,
             'title' => $this->title, 
-            'sub_title'=>$this->sub_title,
-            'color'=>$this->color,
-            'steps' => StepResource::collection($this->whenLoaded('steps')),
+            'description' => $this->description,
+            'image'=>$this->image,
+            'order_index' => $this->pivot->order_index ?? null, // <--- access pivot valu
             'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
 
 
-
-       
     }
 }

@@ -36,6 +36,19 @@ class Provided_Service extends Model
     }
 
 
+     public function steps()
+    {
+        return $this->belongsToMany(Step::class)
+            ->withPivot('order_index')
+            ->orderBy('pivot_order_index');
+    }
+
+
+    public function projects()
+{
+    return $this->belongsToMany(Project::class, 'project_provided__service');
+}
+
 
     
 

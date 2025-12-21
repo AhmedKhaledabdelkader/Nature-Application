@@ -27,7 +27,7 @@ class ProjectController extends Controller
     $project=$this->projectService->createProject($request->all()) ;
          
 
-    $project->load(['city', 'country']);
+    $project->load(['city', 'country','services']);
 
         return response()->json([
             'status' => 'success',
@@ -69,7 +69,7 @@ class ProjectController extends Controller
             ], 404);
         }
 
-         $project->load(['city', 'country']);
+         $project->load(['city', 'country','services']);
 
 
         return response()->json([
@@ -90,6 +90,8 @@ class ProjectController extends Controller
                 'message' => 'Project not found'
             ], 404);
         }
+
+        $project->load(['city', 'country','services']);
 
         return response()->json([
             'status' => 'success',

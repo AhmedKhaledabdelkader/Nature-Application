@@ -51,7 +51,15 @@ class ProjectService
             $data['gallery'] = [];
         }
 
-        return $this->projectRepository->create($data);
+        $project= $this->projectRepository->create($data);
+
+if (!empty($data['service_ids'])) {
+    $project->services()->sync($data['service_ids']); 
+}
+
+   return $project ;
+
+
     }
 
     // Get all projects with pagination
@@ -119,6 +127,11 @@ class ProjectService
             $project->gallery = $galleryPaths;
         }
 
+        if (!empty($data['service_ids'])) {
+        $project->services()->sync($data['service_ids'] ?? []);
+
+        }
+
         $project->save();
 
         return $project;
@@ -148,6 +161,8 @@ class ProjectService
                 }
             }
         }
+
+        $project->services()->detach();
 
         return $this->projectRepository->delete($id);
     }

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Sponsor extends Model
 {
 
-      public $incrementing = false;
+    public $incrementing = false;
     protected $keyType = 'string';
 
 

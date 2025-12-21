@@ -17,7 +17,7 @@ class ProvidedServiceRepository implements ProvidedServiceRepositoryInterface
 
      public function find(string $id)
     {
-        return Provided_Service::find($id);
+        return Provided_Service::with('steps')->find($id);
     }
 
     public function all($page, $size)

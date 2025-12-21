@@ -82,6 +82,12 @@ protected static function boot()
 
 
 
+public function services()
+{
+    return $this->belongsToMany(Provided_Service::class, 'project_provided__service');
+}
+
+
 
 
 

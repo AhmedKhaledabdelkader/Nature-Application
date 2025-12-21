@@ -50,6 +50,9 @@ class ValidateProject
                 'mimes:jpeg,png,jpg,webp',
                 'max:2048'
             ],
+
+    'service_ids'   => ['required', 'array'], // must be an array
+    'service_ids.*' => ['uuid', 'exists:provided__services,id'], // each element must be a valid UUID that exists in services table
         ];
 
         $validator = Validator::make($request->all(), $rules);

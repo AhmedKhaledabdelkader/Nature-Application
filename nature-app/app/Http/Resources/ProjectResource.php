@@ -50,6 +50,18 @@ class ProjectResource extends JsonResource
                 ];
             }),
 
+    'services' => $this->whenLoaded('services', function () {
+
+    return $this->services->map(function ($service) {
+        return [
+            'id' => $service->id,
+            'title' => $service->title,
+        ];
+    });
+}),
+
+
+
             // Meta
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

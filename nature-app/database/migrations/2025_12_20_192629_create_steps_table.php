@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('steps', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+           $table->uuid('id')->primary();
+           $table->json('title');
+           $table->json("description");
+           $table->string("image") ;
+           $table->timestamps();
         });
     }
 

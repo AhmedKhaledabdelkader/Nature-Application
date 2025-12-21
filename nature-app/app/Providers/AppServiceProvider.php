@@ -9,6 +9,7 @@ use App\Repositories\Contracts\CountryRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Repositories\Contracts\ProvidedServiceRepositoryInterface;
 use App\Repositories\Contracts\SponsorRepositoryInterface;
+use App\Repositories\Contracts\StepRepositoryInterface;
 use App\Repositories\Eloquents\AwardRepository;
 use App\Repositories\Eloquents\CityRepository;
 use App\Repositories\Eloquents\ClientRepository;
@@ -16,6 +17,7 @@ use App\Repositories\Eloquents\CountryRepository;
 use App\Repositories\Eloquents\ProjectRepository;
 use App\Repositories\Eloquents\ProvidedServiceRepository;
 use App\Repositories\Eloquents\SponsorRepository;
+use App\Repositories\Eloquents\StepRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -70,6 +72,12 @@ class AppServiceProvider extends ServiceProvider
  $this->app->bind(
     ProjectRepositoryInterface::class,
     ProjectRepository::class
+);
+
+
+ $this->app->bind(
+    StepRepositoryInterface::class,
+    StepRepository::class
 );
 
 
