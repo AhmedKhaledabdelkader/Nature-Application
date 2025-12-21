@@ -24,4 +24,6 @@ Route::prefix('projects')->group(base_path('routes/Apis/project.php'));
 
 Route::prefix('steps')->group(base_path('routes/Apis/step.php'));
 
+Route::prefix('portfolios')->group(base_path('routes/Apis/portfolio.php'));
+
 Route::prefix('media')->group(base_path('routes/Apis/media.php'));

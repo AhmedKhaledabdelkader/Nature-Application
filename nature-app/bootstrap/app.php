@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
              'validate.service'=>\App\Http\Middleware\ValidateService::class,
              'validate.project'=>\App\Http\Middleware\ValidateProject::class,
              'validate.step'=>\App\Http\Middleware\ValidateStep::class,
+             'validate.portfolio'=>\App\Http\Middleware\ValidatePortfolioFile::class,
+
 
 
              
