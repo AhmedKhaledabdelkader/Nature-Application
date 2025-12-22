@@ -25,10 +25,7 @@ class PortfolioService
 
     // 2️⃣ Store the new file
     $filePath = $data['portfolio_file']->storeAs(
-        $folder,
-        'full-awards-portfolio.' . $data['portfolio_file']->getClientOriginalExtension(),
-        $disk
-    );
+        $folder, 'full-awards-portfolio.' . $data['portfolio_file']->getClientOriginalExtension(),$disk);
 
     return $filePath;
 }

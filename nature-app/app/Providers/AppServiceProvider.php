@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Observers\UserObserver;
 use App\Repositories\Contracts\AwardRepositoryInterface;
 use App\Repositories\Contracts\CityRepositoryInterface;
 use App\Repositories\Contracts\ClientRepositoryInterface;
@@ -10,6 +12,7 @@ use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Repositories\Contracts\ProvidedServiceRepositoryInterface;
 use App\Repositories\Contracts\SponsorRepositoryInterface;
 use App\Repositories\Contracts\StepRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquents\AwardRepository;
 use App\Repositories\Eloquents\CityRepository;
 use App\Repositories\Eloquents\ClientRepository;
@@ -18,6 +21,7 @@ use App\Repositories\Eloquents\ProjectRepository;
 use App\Repositories\Eloquents\ProvidedServiceRepository;
 use App\Repositories\Eloquents\SponsorRepository;
 use App\Repositories\Eloquents\StepRepository;
+use App\Repositories\Eloquents\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -82,6 +86,13 @@ class AppServiceProvider extends ServiceProvider
 
 
 
+ $this->app->bind(
+    UserRepositoryInterface::class,
+    UserRepository::class
+);
+
+
+
 
 
 
@@ -93,6 +104,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        
+           User::observe(UserObserver::class);
+
+
     }
 }

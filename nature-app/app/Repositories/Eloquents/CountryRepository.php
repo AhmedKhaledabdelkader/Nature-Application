@@ -16,15 +16,20 @@ class CountryRepository implements CountryRepositoryInterface
 
     public function find(string $id)
 {
-    return Country::with('projects.city')->find($id);
+    return Country::with('projects.city')->withCount('projects')  
+        ->has('projects') ->find($id);
 }
 
 
-    public function all($page,$size)
-    {
- 
-         return Country::query()->paginate($size,['*'],'page',$page);
-    }
+   public function all($page, $size)
+{
+    return Country::query()
+              
+        ->withCount('projects')    
+        ->has('projects')          
+        ->paginate($size, ['*'], 'page', $page);
+}
+
 
     public function update(string $id, array $data)
     {

@@ -38,6 +38,7 @@ class AwardService
         ];
 
         $data['organization_name'] = [
+            
            $locale => $data['organization_name'] ?? null,
         ];
 

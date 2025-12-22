@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 
-class ValidateClient
+class ValidateUserAuth
 {
     /**
      * Handle an incoming request.
@@ -17,17 +17,27 @@ class ValidateClient
     public function handle(Request $request, Closure $next): Response
     {
 
-          $rules = [
-    
-                
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'name' => ['required', 'string',"min:3",'max:255'],
-                'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:9000'],
-        
-            ];
 
+         $rules = [
+    'username' => [
+            'required',
+            'string',
+            'min:3',
+            'max:30',
+            'regex:/^(?!.*[._]{2})[a-zA-Z][a-zA-Z0-9._]*$/',
+            
+],
 
             
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', 
+            ],
+        ];
+
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -41,12 +51,11 @@ class ValidateClient
 
 
 
+
+
+
         return $next($request);
-
-
-
-
-
-        
+       
+       
     }
 }

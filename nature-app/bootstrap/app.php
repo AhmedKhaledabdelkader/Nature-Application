@@ -27,6 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
              'validate.project'=>\App\Http\Middleware\ValidateProject::class,
              'validate.step'=>\App\Http\Middleware\ValidateStep::class,
              'validate.portfolio'=>\App\Http\Middleware\ValidatePortfolioFile::class,
+             'validate.user'=>\App\Http\Middleware\ValidateUser::class,
+             'validate.userAuth'=>\App\Http\Middleware\ValidateUserAuth::class,
+              'auth.user'=> \App\Http\Middleware\AuthenticationMiddleware::class,
+              'admin.user'=>\App\Http\Middleware\AdminMiddleware::class
+             
+
 
 
 
