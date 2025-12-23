@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
+
+class ValidateTestimonial
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+
+
+        
+         $rules = [
+    
+                
+                'locale'=> ['sometimes', 'in:ar,en'],
+                'feedback' => ['required', 'string',"min:3",'max:255'],
+                'name' => ['required', 'string',"min:3",'max:255'],
+                'job_title' => ['required', 'string',"min:3",'max:255'],
+                'company_name' => ['required', 'string',"min:3",'max:255'],
+                
+               
+
+    
+        
+            ];
+
+
+            
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+
+
+
+
+        return $next($request);
+
+
+
+
+        
+    }
+}

@@ -28,4 +28,6 @@ Route::prefix('portfolios')->group(base_path('routes/Apis/portfolio.php'));
 
 Route::prefix('users')->group(base_path('routes/Apis/user.php'));
 
+Route::prefix('testimonials')->group(base_path('routes/Apis/testimonial.php'));
+
 Route::prefix('media')->group(base_path('routes/Apis/media.php'));
