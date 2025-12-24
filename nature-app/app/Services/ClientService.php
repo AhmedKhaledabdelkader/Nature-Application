@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\ClientRepositoryInterface;
-use App\Repositories\Eloquents\ClientRepository;
+use App\Traits\HandlesFileUpload;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
+
 class ClientService
 {
+
+    use HandlesFileUpload ;
 
     public $clientRepository;
 
@@ -29,12 +32,10 @@ class ClientService
        $locale => $data['name'] ?? null,
     ];
 
-      if (!empty($data['logo'])) {
+    $data["logo"] = $this->uploadFile($data['logo'] ?? null, 'clients', $this->imageConverterService);
+    
 
-        $data['logo'] = $this->imageConverterService->convertAndStore($data['logo'], 'clients');
-    }
-
-        return $this->clientRepository->create($data);
+    return $this->clientRepository->create($data);
 
     }
 
@@ -51,26 +52,17 @@ class ClientService
     $locale = $data['locale'] ?? 'en';
     App::setLocale($locale);
 
-    // 📝 update localized name
+   
     if (isset($data['name'])) {
+        
         $client->setLocalizedValue('name', $locale, $data['name']);
     }
 
-    // 🖼️ update logo
-    if (!empty($data['logo'])) {
+     $client->logo = $this->updateFile($data['logo'] ??null,$client->logo,'clients',$this->imageConverterService);
 
-        // delete old logo
-        if ($client->logo && Storage::disk('private')->exists($client->logo)) {
-            Storage::disk('private')->delete($client->logo);
-        }
+     $client->save();
 
-        $client->logo = $this->imageConverterService
-            ->convertAndStore($data['logo'], 'clients');
-    }
-
-    $client->save();
-
-    return $client;
+     return $client;
 }
 
 
@@ -78,13 +70,17 @@ class ClientService
 public function getAllClients(array $data){
 
  $size = $data['size'] ?? 10;
-$page = $data['page'] ?? 1;
+ $page = $data['page'] ?? 1;
 
 
     return $this->clientRepository->getAll($page,$size) ;
 
 
 }
+
+
+
+
 
 
 public function deleteClient(string $id)
@@ -95,18 +91,10 @@ public function deleteClient(string $id)
         return false;
     }
     
-    // Delete logo if exists
-    if ($client->logo && Storage::disk('private')->exists($client->logo)) {
-        Storage::disk('private')->delete($client->logo);
-    }
+    $this->deleteFile($client->logo);
     
     return $this->clientRepository->delete($id);
 }
-
-
-
-
-
 
 
 

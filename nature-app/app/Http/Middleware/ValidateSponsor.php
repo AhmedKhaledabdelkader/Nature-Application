@@ -21,7 +21,7 @@ class ValidateSponsor
                 
                 'locale'=> ['sometimes', 'in:ar,en'],
                 'name' => ['required', 'string',"min:3",'max:255'],
-                'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+                'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:7000'],
                 'award_id' => ['required','uuid', 'exists:awards,id']
     
         

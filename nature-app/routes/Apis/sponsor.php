@@ -8,3 +8,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/', [SponsorController::class, 'store'])->middleware(["validate.sponsor","localize"]);
 
 Route::post('/{id}', [SponsorController::class, 'update'])->middleware(["localize"]);
+
+Route::get('/', [SponsorController::class, 'index'])->middleware(["localize"]);
+
+
+Route::delete('/{id}', [SponsorController::class, 'destroy']);
+

@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Repositories\Contracts\AwardRepositoryInterface;
 use App\Repositories\Eloquents\AwardRepository;
+use App\Traits\HandlesFileUpload;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 
 class AwardService
 {
+
+
+    use HandlesFileUpload ;
 
     public $awardRepository;
     
@@ -42,25 +46,9 @@ class AwardService
            $locale => $data['organization_name'] ?? null,
         ];
 
-        if (!empty($data['image'])) {
-
-            $data['image'] = $this->imageConverterService->convertAndStore($data['image'], 'awards/images');
-        }
-
-        if (!empty($data['organization_logo'])) {
-            
-
-            $data['organization_logo'] = $this->imageConverterService->convertAndStore($data['organization_logo'], 'awards/organizations/logos');
-        
-        }
-
-
-         if (!empty($data['content_file'])) {
-
-        $imagePath=$data["content_file"]->store("awards/contents","private");
-        $data['content_file']=$imagePath;
-
-        }
+        $data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
+        $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
+        $data["content_file"]=$this->uploadContentFile($data["content_file"]??null,"awards/contents");
 
         return $this->awardRepository->create($data);
 
@@ -102,30 +90,16 @@ class AwardService
             $award->setLocalizedValue('organization_name', $locale, $data['organization_name']);
         }
 
-        // Update image
-        if (!empty($data['image'])) {
-            if ($award->image && Storage::disk('private')->exists($award->image)) {
-                Storage::disk('private')->delete($award->image);
-            }
-            $award->image = $this->imageConverterService->convertAndStore($data['image'], 'awards/images');
-        }
+        
+        $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
 
-        // Update organization logo
-        if (!empty($data['organization_logo'])) {
-            if ($award->organization_logo && Storage::disk('private')->exists($award->organization_logo)) {
-                Storage::disk('private')->delete($award->organization_logo);
-            }
-            $award->organization_logo = $this->imageConverterService->convertAndStore($data['organization_logo'], 'awards/organizations/logos');
-        }
 
-        // Update content file
-        if (!empty($data['content_file'])) {
-            if ($award->content_file && Storage::disk('private')->exists($award->content_file)) {
-                Storage::disk('private')->delete($award->content_file);
-            }
-            $award->content_file = $data['content_file']->store('awards/contents', 'private');
-        }
-
+        $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
+        $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
+        
+        
+       $award->content_file=$this->updateContentFile($data["content_file"]??null,$award->content_file,"awards/contents");
+ 
         $award->save();
 
         return $award;
@@ -158,21 +132,10 @@ class AwardService
         if (!$award) {
             return false;
         }
-        
-        // Delete image if exists
-        if ($award->image && Storage::disk('private')->exists($award->image)) {
-            Storage::disk('private')->delete($award->image);
-        }
 
-        // Delete organization logo if exists
-        if ($award->organization_logo && Storage::disk('private')->exists($award->organization_logo)) {
-            Storage::disk('private')->delete($award->organization_logo);
-        }
-
-        // Delete content file if exists
-        if ($award->content_file && Storage::disk('private')->exists($award->content_file)) {
-            Storage::disk('private')->delete($award->content_file);
-        }
+        $this->deleteFile($award->image);
+        $this->deleteFile($award->organization_logo);
+        $this->deleteContentFile($award->content_file) ;
         
         return $this->awardRepository->delete($id);
     }

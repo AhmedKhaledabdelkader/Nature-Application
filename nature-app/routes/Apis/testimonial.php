@@ -11,7 +11,6 @@ Route::post('/', [TestimonialController::class, 'store'])->middleware(["validate
 Route::post('/{id}', [TestimonialController::class, 'update'])->middleware(["localize"]);
 
 
-
 Route::get('/', [TestimonialController::class, 'index'])->middleware(["localize"]);
 
 

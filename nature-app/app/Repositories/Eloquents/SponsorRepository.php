@@ -17,5 +17,27 @@ class SponsorRepository implements SponsorRepositoryInterface
     {
         return Sponsor::find($id);
     }
+
+     public function getAll($page,$size){
+
+
+        return Sponsor::query()->paginate($size,['*'],'page',$page);
+
+    }
+
+    
+    public function delete(string $id): bool
+{
+    $sponsor = Sponsor::find($id);
+    
+    if ($sponsor) {
+        return $sponsor->delete();
+    }
+    
+    return false;
+}
+
+
+
  
 }
