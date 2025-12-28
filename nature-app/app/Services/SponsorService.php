@@ -5,13 +5,16 @@ namespace App\Services;
 use App\Repositories\Contracts\SponsorRepositoryInterface;
 use App\Repositories\Eloquents\SponsorRepository;
 use App\Traits\HandlesFileUpload;
+use App\Traits\HandlesLocalization;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 class SponsorService
 {
 
-    use HandlesFileUpload ;
+    use HandlesFileUpload,HandlesLocalization,LocalizesData ;
+
     public $sponsorRepository;
 
     public function __construct(SponsorRepositoryInterface $sponsorRepository,protected ImageConverterService $imageConverterService)
@@ -24,17 +27,12 @@ class SponsorService
     
     {
 
-        
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);   
-    $data['name'] = [
-       $locale => $data['name'] ?? null,
-    ];
-
+    $locale = app()->getLocale();
+    
+    $this->localizeFields($data,['name'],$locale);
      
     $data["logo"] = $this->uploadFile($data['logo'] ?? null, 'sponsors', $this->imageConverterService);
     
-
     return $this->sponsorRepository->create($data);
 
         
@@ -42,23 +40,19 @@ class SponsorService
 
 
     public function updateSponsor(string $id, array $data)
-{
+    {
+
+
+    $locale = app()->getLocale();
     $sponsor = $this->sponsorRepository->find($id);
 
     if (!$sponsor) {
         return null;
     }
 
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);
-    
-    if (isset($data['name'])) {
-        $sponsor->setLocalizedValue('name', $locale, $data['name']);
-    }
+    $this->setLocalizedFields($sponsor, $data, ['name'],$locale);
 
     $sponsor->logo = $this->updateFile($data['logo'] ??null,$sponsor->logo,'sponsors',$this->imageConverterService);
-    
-
 
     $sponsor->save();
 

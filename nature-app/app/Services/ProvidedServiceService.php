@@ -1,13 +1,20 @@
 <?php
 
-namespace App;
+namespace App\Services;
 
 use App\Repositories\Contracts\ProvidedServiceRepositoryInterface;
+use App\Traits\HandlesLocalization;
+use App\Traits\HandlesUnlocalized;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 
 class ProvidedServiceService
 {
-    public $providedRepository ;
+
+
+     use HandlesLocalization,LocalizesData,HandlesUnlocalized ;
+
+    public $providedRepository;
 
 
     public function __construct(ProvidedServiceRepositoryInterface $providedRepository)
@@ -19,19 +26,14 @@ class ProvidedServiceService
      public function createService(array $data) 
     {
 
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);   
 
-    $data['title'] = [
-       $locale => $data['title'] ?? null,
-    ];
+     $locale = app()->getLocale();
+
+    $this->localizeFields($data,['title','sub_title'],$locale);
 
 
-     $data['sub_title'] = [
-       $locale => $data['sub_title'] ?? null,
-    ];
+     return $this->providedRepository->create($data);
 
-        return $this->providedRepository->create($data);
     }
 
 
@@ -52,27 +54,20 @@ class ProvidedServiceService
     // Update
     public function updateService(string $id, array $data)
     {
+
+         $locale = app()->getLocale();
+
+
         $service = $this->providedRepository->find($id);
 
         if (!$service) {
             return null;
         }
 
-        $locale = $data['locale'] ?? 'en';
-        App::setLocale($locale);
 
-        if (isset($data['title'])) {
-            $service->setLocalizedValue('title', $locale, $data['title']);
-        }
+        $this->setLocalizedFields($service, $data, ['title','sub_title'],$locale);
 
-        if (isset($data['sub_title'])) {
-            $service->setLocalizedValue('sub_title', $locale, $data['sub_title']);
-        }
-
-        if (isset($data['color'])) {
-            
-            $service->color=$data["color"];
-        }
+       $this->setUnlocalizedFields($service, $data, ['color']);
 
         $service->save();
 

@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/', [ProjectController::class, 'store'])->middleware(["validate.project","localize"]);
+Route::post('/', [ProjectController::class, 'store'])->middleware(["validate.project","localize","set.locale"]);
 
 
 
-Route::post('/{id}', [ProjectController::class, 'update'])->middleware(["localize"]);
+Route::post('/{id}', [ProjectController::class, 'update'])->middleware(["localize","set.locale"]);
 
 
 Route::get('/', [ProjectController::class, 'index'])->middleware("validate.pagination","localize");

@@ -19,11 +19,11 @@ class ServiceResource extends JsonResource
            return [
             'id' => $this->id,
             'title' => $this->title, 
-            'sub_title'=>$this->sub_title,
+            'subTitle'=>$this->sub_title,
             'color'=>$this->color,
             'steps' => StepResource::collection($this->whenLoaded('steps')),
-            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
-            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
+            'createdAt' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updatedAt' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
 
 

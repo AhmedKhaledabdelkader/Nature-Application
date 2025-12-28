@@ -5,12 +5,18 @@ namespace App\Services;
 use App\Models\Provided_Service;
 use App\Repositories\Contracts\ProvidedServiceRepositoryInterface;
 use App\Repositories\Contracts\StepRepositoryInterface;
+use App\Traits\HandlesFileUpload;
+use App\Traits\HandlesLocalization;
+use App\Traits\HandlesUnlocalized;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Request;
 
 class StepService
 {
+
+    use HandlesFileUpload,HandlesLocalization,HandlesUnlocalized,LocalizesData ;
     public $stepRepository ;
     public $serviceRepository ;
     public function __construct(StepRepositoryInterface $stepRepository,ProvidedServiceRepositoryInterface $serviceRepository
@@ -26,28 +32,20 @@ class StepService
 
      public function addStepToService(Provided_Service $service, array $data)
     {
-        $locale = $data['locale'] ?? 'en';
-        App::setLocale($locale);
 
- $data['title'] = [$locale => $data['title'] ?? null,];
- $data['description'] = [$locale => $data['description'] ?? null,];
+$locale = app()->getLocale();
+        
 
-if (!empty($data['image'])) {
+$this->localizeFields($data, ['title','description'], $locale);
 
-    $data['image'] = $this->imageConverterService->convertAndStore($data['image'], 'steps');
+$data["image"]=$this->uploadFile($data['image'] ?? null, 'steps', $this->imageConverterService);
 
-    }
+$order = $data['order_index']?? $service->steps()->count() + 1;
 
-
-        // Determine order
-        $order = $data['order_index']
-            ?? $service->steps()->count() + 1;
-
-
-            $step=$this->stepRepository->create($data);
+$step=$this->stepRepository->create($data);
 
         // Attach step with order
-        $service->steps()->attach($step->id, [
+       $service->steps()->attach($step->id, [
             'order_index' => $order
         ]);
 
@@ -58,6 +56,9 @@ if (!empty($data['image'])) {
     public function updateStep(array $data) {
 
 
+
+        $locale = app()->getLocale();
+
         $step = $this->stepRepository->find($data["stepId"]);
          $service = $this->serviceRepository->find($data["serviceId"]);
 
@@ -65,33 +66,12 @@ if (!empty($data['image'])) {
             return null;
         }
 
-        $locale = $data['locale'] ?? 'en';
-        App::setLocale($locale);
+        $this->setLocalizedFields($step, $data, ['title','description'],$locale);
 
-        // Update localized title
-        if (isset($data['title'])) {
-            $step->setLocalizedValue('title', $locale, $data['title']);
-        }
-
-        // Update localized description
-        if (isset($data['description'])) {
-            $step->setLocalizedValue('description', $locale, $data['description']);
-        }
-
-        // Update image (delete old → store new)
-        if (!empty($data['image'])) {
-
-            if ($step->image && Storage::disk('private')->exists($step->image)) {
-                Storage::disk('private')->delete($step->image);
-            }
-
-            $step->image = $this->imageConverterService
-                ->convertAndStore($data['image'], 'steps');
-        }
+        $step->image = $this->updateFile($data['image'] ??null,$step->image,'steps',$this->imageConverterService);
 
         $step->save();
 
-        // Update order_index if provided
         if (isset($data['order_index'])) {
             $service->steps()->updateExistingPivot($data["stepId"], [
                 'order_index' => $data['order_index'],
@@ -101,10 +81,7 @@ if (!empty($data['image'])) {
         return $step;
     }
 
-    /**
-     * DELETE STEP
-     */
-
+  
     
     public function deleteStep(array $data)
     {
@@ -117,15 +94,11 @@ if (!empty($data['image'])) {
         }
 
 
-        // delete image
-        if ($step->image && Storage::disk('private')->exists($step->image)) {
-            Storage::disk('private')->delete($step->image);
-        }
+        $this->deleteFile($step->image);
 
-        // detach from service
         $service->steps()->detach($data["stepId"]);
 
-        // delete step
+        
         $this->stepRepository->delete($data["stepId"]);
 
         return true;

@@ -20,9 +20,9 @@ class StepResource extends JsonResource
             'title' => $this->title, 
             'description' => $this->description,
             'image'=>$this->image,
-            'order_index' => $this->pivot->order_index ?? null, // <--- access pivot valu
-            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
-            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
+            'orderIndex' => $this->pivot->order_index ?? null, // <--- access pivot valu
+            'createdAt' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
+            'updatedAt' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
 
 

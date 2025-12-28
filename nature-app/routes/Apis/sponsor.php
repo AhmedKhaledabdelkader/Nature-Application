@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/', [SponsorController::class, 'store'])->middleware(["validate.sponsor","localize"]);
+Route::post('/', [SponsorController::class, 'store'])->middleware(["validate.sponsor","localize","set.locale"]);
 
-Route::post('/{id}', [SponsorController::class, 'update'])->middleware(["localize"]);
+Route::post('/{id}', [SponsorController::class, 'update'])->middleware(["localize","set.locale"]);
 
 Route::get('/', [SponsorController::class, 'index'])->middleware(["localize"]);
 

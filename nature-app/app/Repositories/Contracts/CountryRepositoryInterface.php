@@ -15,6 +15,8 @@ interface CountryRepositoryInterface
 
     public function delete(string $id);
 
+    public function findCountry(string $id);
+
 
 
 }

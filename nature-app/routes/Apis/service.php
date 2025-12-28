@@ -5,16 +5,17 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/', [ProvidedServiceController::class, 'store'])->middleware(["validate.service","localize"]);
+Route::post('/', [ProvidedServiceController::class, 'store'])->middleware(["validate.service","localize","set.locale"]);
 
 
 
-Route::post('/{id}', [ProvidedServiceController::class, 'update'])->middleware(["localize"]);
+Route::post('/{id}', [ProvidedServiceController::class, 'update'])->middleware(["localize","set.locale"]);
 
 
 Route::get('/', [ProvidedServiceController::class, 'index'])->middleware("validate.pagination","localize");
 
 
 Route::get('/{id}', [ProvidedServiceController::class, 'show'])->middleware(["localize"]);
+
 
 Route::delete('/{id}', [ProvidedServiceController::class, 'destroy']);

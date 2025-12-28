@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Traits\HandlesFileUpload;
+use App\Traits\HandlesLocalization;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,7 +13,8 @@ use Illuminate\Support\Facades\Storage;
 class ClientService
 {
 
-    use HandlesFileUpload ;
+    
+    use HandlesFileUpload,HandlesLocalization,LocalizesData ;
 
     public $clientRepository;
 
@@ -24,17 +27,12 @@ class ClientService
     public function createClient(array $data)
     {
 
-           
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);  
-
-    $data['name'] = [
-       $locale => $data['name'] ?? null,
-    ];
+     $locale = app()->getLocale();
+  
+    $this->localizeFields($data,['name'],$locale);
 
     $data["logo"] = $this->uploadFile($data['logo'] ?? null, 'clients', $this->imageConverterService);
     
-
     return $this->clientRepository->create($data);
 
     }
@@ -42,27 +40,24 @@ class ClientService
 
 
     public function updateClient(string $id, array $data)
+
 {
+
+    $locale = app()->getLocale();
+
     $client = $this->clientRepository->find($id);
 
     if (!$client) {
         return null;
     }
 
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);
+    $this->setLocalizedFields($client, $data, ['name'],$locale);
 
-   
-    if (isset($data['name'])) {
-        
-        $client->setLocalizedValue('name', $locale, $data['name']);
-    }
+    $client->logo = $this->updateFile($data['logo']??null,$client->logo,'clients',$this->imageConverterService);
 
-     $client->logo = $this->updateFile($data['logo'] ??null,$client->logo,'clients',$this->imageConverterService);
+    $client->save();
 
-     $client->save();
-
-     return $client;
+    return $client;
 }
 
 
@@ -73,7 +68,7 @@ public function getAllClients(array $data){
  $page = $data['page'] ?? 1;
 
 
-    return $this->clientRepository->getAll($page,$size) ;
+return $this->clientRepository->getAll($page,$size) ;
 
 
 }

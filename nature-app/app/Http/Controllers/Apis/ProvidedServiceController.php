@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
-use App\ProvidedServiceService;
+use App\Services\ProvidedServiceService;
 use Illuminate\Http\Request;
 
 

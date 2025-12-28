@@ -4,14 +4,17 @@ namespace App\Services;
 
 use App\Repositories\Contracts\CityRepositoryInterface;
 use App\Repositories\Eloquents\CityRepository;
+use App\Traits\HandlesLocalization;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 
 class CityService
 {
 
+    use HandlesLocalization,LocalizesData ;
+
+
     public $cityRepository;
-
-
 
     public function __construct(CityRepositoryInterface $cityRepository)
     {
@@ -22,13 +25,13 @@ class CityService
     public function createCity(array $data) 
     {
 
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);   
-    $data['name'] = [
-       $locale => $data['name'] ?? null,
-    ];
+     $locale = app()->getLocale();
+    
+    $this->localizeFields($data,['name'],$locale);
 
-        return $this->cityRepository->create($data);
+    return $this->cityRepository->create($data);
+
+
     }
 
 
@@ -50,23 +53,23 @@ class CityService
 
     public function updateCity(string $id, array $data)
     {
-        $city = $this->cityRepository->find($id);
+
+    $locale = app()->getLocale();
+
+
+    $city = $this->cityRepository->find($id);
 
         if (!$city) {
             return null;
         }
+        
+    $this->setLocalizedFields($city, $data, ['name'],$locale);
 
-        $locale = $data['locale'] ?? 'en';
-        App::setLocale($locale);
+    $city->save();
 
-        if (isset($data['name'])) {
-            
-            $city->setLocalizedValue('name', $locale, $data['name']);
-        }
+    return $city;
 
-        $city->save();
-
-        return $city;
+    
     }
 
      public function deleteCity(string $id): bool

@@ -21,6 +21,14 @@ class CountryRepository implements CountryRepositoryInterface
 }
 
 
+public function findCountry(string $id){
+
+    return Country::find($id);
+
+
+}
+
+
    public function all($page, $size)
 {
     return Country::query()

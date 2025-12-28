@@ -3,10 +3,16 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\TestimonialRepositoryInterface;
+use App\Traits\HandlesLocalization;
+use App\Traits\HandlesUnlocalized;
+use App\Traits\LocalizesData;
 use Illuminate\Support\Facades\App;
 
 class TestimonialService
 {
+
+     use HandlesLocalization,LocalizesData,HandlesUnlocalized ;
+
 
     public $testimonialRepository ;
    
@@ -20,17 +26,9 @@ class TestimonialService
 
     public function addTestimonial(array $data){
                 
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);  
+    $locale = app()->getLocale();
 
-    $data['feedback'] = [
-       $locale => $data['feedback'] ?? null,
-    ];
-
-    $data['job_title'] = [
-       $locale => $data['job_title'] ?? null,
-    ];
-
+    $this->localizeFields($data,['feedback','job_title'],$locale);
 
    return $this->testimonialRepository->create($data) ;
 
@@ -41,43 +39,20 @@ class TestimonialService
     public function updateTestimonial(string $id,array $data){
 
 
+    $locale = app()->getLocale();
+
+
 $testimonial = $this->testimonialRepository->find($id);
 
     if (!$testimonial) {
         return null;
     }
 
+    $this->setLocalizedFields($testimonial, $data, ['feedback','job_title'],$locale);
     
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);
-
-   
-    if (isset($data['feedback'])) {
-        $testimonial->setLocalizedValue('feedback', $locale, $data['feedback']);
-    }
-
-
-    if (isset($data['name'])) {
-    $testimonial->name=$data["name"];
-    }
-
-
-    if (isset($data['company_name'])) {
-    $testimonial->company_name=$data["company_name"];
-    } 
-
-     
-
-
-      if (isset($data['job_title'])) {
-        $testimonial->setLocalizedValue('job_title', $locale, $data['job_title']);
-    }
-
-    
-
+    $this->setUnlocalizedFields($testimonial, $data, ['name','company_name']);
 
    $testimonial->save() ;
-
 
    return $testimonial;
 

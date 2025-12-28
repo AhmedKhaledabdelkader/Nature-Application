@@ -8,12 +8,17 @@ use Illuminate\Support\Facades\Log;
 
 
 use App\Repositories\Eloquents\CountryRepository;
+use App\Traits\HandlesFileUpload;
+use App\Traits\HandlesLocalization;
+use App\Traits\LocalizesData;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 
 class CountryService
 {
+
+    use HandlesFileUpload,HandlesLocalization,LocalizesData ;
 
     public $countryRepository;
     
@@ -26,17 +31,13 @@ class CountryService
 
 public function createCountry(array $data) 
 {
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);
-    
-    $data['name'] = [
-       $locale => $data['name'] ?? null,
-    ];
-    
-    if (!empty($data['logo'])) {
 
-        $data['logo'] = $this->imageConverterService->convertAndStore($data['logo'], 'countries');
-    }
+    $locale = app()->getLocale();
+
+    
+    $this->localizeFields($data,['name'],$locale);
+    
+    $data["logo"]=$this->uploadFile($data['logo'] ?? null, 'countries', $this->imageConverterService);
     
     return $this->countryRepository->create($data);
 }
@@ -50,12 +51,6 @@ public function getAllCountries(array $data)
     return $this->countryRepository->all($page, $size);
 }
 
-
-
-public function getCountryWithProject(){
-
-    
-}
 
 
 
@@ -77,34 +72,18 @@ public function getCountryById(string $id)
 
 public function updateCountry(string $id, array $data) 
 {
-    $locale = $data['locale'] ?? 'en';
-    App::setLocale($locale);
+   
+    $locale = app()->getLocale();
 
-    $country = $this->countryRepository->find($id);
+    $country = $this->countryRepository->findCountry($id);
 
     if (!$country) {
         return null;
     }
 
-    // Update localized name
-    if (isset($data['name'])) {
-        $country->setLocalizedValue('name', $locale, $data['name']);
-    }
+   $this->setLocalizedFields($country, $data, ['name'],$locale);
 
-    // Update logo
-    if (!empty($data['logo'])) {
-
-        // Delete old logo
-        if ($country->logo && Storage::disk('private')->exists($country->logo)) {
-            Storage::disk('private')->delete($country->logo);
-        }
-
-        // Store new logo
-        $newLogoPath = $this->imageConverterService->convertAndStore($data['logo'], 'countries');
-
-        // 🔥 THIS WAS MISSING
-        $country->logo = $newLogoPath;
-    }
+   $country->logo = $this->updateFile($data['logo'] ??null,$country->logo,'countries',$this->imageConverterService);
 
     $country->save();
 
@@ -116,17 +95,15 @@ public function updateCountry(string $id, array $data)
 
 public function deleteCountry(string $id)
 {
-    $country = $this->countryRepository->find($id);
+    $country = $this->countryRepository->findCountry($id);
     
     if (!$country) {
         return false;
     }
+
+    $this->deleteFile($country->logo);
     
-    // Delete logo if exists
-    if ($country->logo && Storage::disk('private')->exists($country->logo)) {
-        Storage::disk('private')->delete($country->logo);
-    }
-    
+   
     return $this->countryRepository->delete($id);
 }
 
