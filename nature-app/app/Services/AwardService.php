@@ -8,6 +8,7 @@ use App\Traits\HandlesFileUpload;
 use App\Traits\HandlesLocalization;
 use App\Traits\HandlesUnlocalized;
 use App\Traits\LocalizesData;
+use App\Traits\SyncRelations;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,7 +17,7 @@ class AwardService
 {
 
 
-    use HandlesFileUpload,HandlesLocalization,LocalizesData,HandlesUnlocalized ;
+    use HandlesFileUpload,HandlesLocalization,LocalizesData,HandlesUnlocalized,SyncRelations ;
 
     public $awardRepository;
     
@@ -30,18 +31,24 @@ class AwardService
     public function createAward(array $data) 
     {
         
-    $locale = app()->getLocale();
+$locale = app()->getLocale();
 
-    $this->localizeFields($data,['title','description','organization_name'],$locale);
+$this->localizeFields($data,['title','description','organization_name'],$locale);
 
-    $data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
+$data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
 
-    $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
+$data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
 
-    return $this->awardRepository->create($data);
+$award= $this->awardRepository->create($data);
+
+$this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
+
+return $award ;
+
+}
 
         
-    }
+    
 
 
 
@@ -65,6 +72,9 @@ class AwardService
 
     $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
      $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
+
+
+      $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
 
         $award->save();
 
@@ -104,7 +114,8 @@ class AwardService
         $this->deleteFile($award->image);
         $this->deleteFile($award->organization_logo);
        
-        
+         $award->sponsors()->detach();
+
         return $this->awardRepository->delete($id);
     }
 

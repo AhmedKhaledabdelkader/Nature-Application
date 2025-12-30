@@ -52,7 +52,7 @@ class Award extends Model
 
 
 // this a real important part to delete related sponsors' logos when an award is deleted
-
+/*
     protected static function booted()
 {
     static::deleting(function ($award) {
@@ -63,13 +63,12 @@ class Award extends Model
         }
     });
 }
-
+*/
 
     public function sponsors()
     {
-        return $this->hasMany(Sponsor::class);
+        return $this->belongsToMany(Sponsor::class, 'award_sponsor');
     }
-
 
     
 }

@@ -32,7 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
              'validate.testimonial'=>\App\Http\Middleware\ValidateTestimonial::class,
               'auth.user'=> \App\Http\Middleware\AuthenticationMiddleware::class,
               'admin.user'=>\App\Http\Middleware\AdminMiddleware::class,
-               'set.locale'=>\App\Http\Middleware\SetLocale::class
+               'set.locale'=>\App\Http\Middleware\SetLocale::class,
+            'validate.projectMetric'=>\App\Http\Middleware\ValidateProjectMetric::class,
 
              
 

@@ -30,4 +30,6 @@ Route::prefix('users')->group(base_path('routes/Apis/user.php'));
 
 Route::prefix('testimonials')->group(base_path('routes/Apis/testimonial.php'));
 
+Route::prefix('project_metrics')->group(base_path('routes/Apis/project_metric.php'));
+
 Route::prefix('media')->group(base_path('routes/Apis/media.php'));

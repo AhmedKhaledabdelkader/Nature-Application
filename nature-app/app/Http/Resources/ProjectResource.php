@@ -24,15 +24,15 @@ class ProjectResource extends JsonResource
             'overview' => $this->overview,
             'brief' => $this->brief,
             'result' => $this->result,
-            'project_reflected' => $this->project_reflected,
+            'projectReflected' => $this->project_reflected,
 
             // Dates
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
+            'startDate' => $this->start_date,
+            'endDate' => $this->end_date,
 
             // Images
-            'image_before' => $this->image_before,
-            'image_after' => $this->image_after,
+            'imageBefore' => $this->image_before,
+            'imageAfter' => $this->image_after,
             'gallery' => $this->gallery ?? [],
 
             // Relations
@@ -60,11 +60,18 @@ class ProjectResource extends JsonResource
     });
 }),
 
+ 'metrics' => $this->whenLoaded('metrics', function () {
+                return ProjectMetricResource::collection($this->metrics);
+            }),
+
 
 
             // Meta
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+
+
+
         ];
 
 

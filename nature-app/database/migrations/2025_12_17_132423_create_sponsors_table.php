@@ -15,13 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->json('name');
             $table->string('logo');
-            $table->uuid('award_id');
             $table->timestamps();
-            $table->foreign('award_id')
-          ->references('id')
-          ->on('awards')
-          ->onDelete('cascade');
-    
         });
     }
 

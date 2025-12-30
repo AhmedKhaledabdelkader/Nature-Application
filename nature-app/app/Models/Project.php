@@ -88,6 +88,10 @@ public function services()
 }
 
 
+public function metrics()
+{
+    return $this->hasMany(Project_Metrics::class);
+}
 
 
 

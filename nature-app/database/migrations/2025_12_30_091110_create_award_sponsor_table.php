@@ -12,8 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('award_sponsor', function (Blueprint $table) {
-            $table->id();
+        
+             $table->uuid('award_id');
+            $table->uuid('sponsor_id');
+            $table->primary(['award_id', 'sponsor_id']);
+
+            $table->foreign('award_id')
+                ->references('id')->on('awards')
+                ->cascadeOnDelete();
+
+            $table->foreign('sponsor_id')
+                ->references('id')->on('sponsors')
+                ->cascadeOnDelete();
             $table->timestamps();
+        
         });
     }
 

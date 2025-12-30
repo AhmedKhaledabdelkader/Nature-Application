@@ -10,71 +10,78 @@ trait HandlesMultipleFileUpload
 {
 
     public function uploadMultipleFiles(
-        ?array $files,
-        string $folder,
-        ImageConverterService $imageConverterService
-    ): array {
-        if (empty($files) || !is_array($files)) {
-            return [];
-        }
-
-        $paths = [];
-
-        foreach ($files as $file) {
-            $paths[] = $imageConverterService->convertAndStore($file, $folder);
-        }
-
-        return $paths;
+    ?array $files,
+    string $folder,
+    ImageConverterService $imageConverterService,
+    string $disk = 'private'
+): array {
+    if (empty($files) || !is_array($files)) {
+        return [];
     }
 
-    /**
-     * Update multiple files (delete old files and upload new ones)
-     */
-    public function updateMultipleFiles(
-        ?array $newFiles,
-        ?array $oldFiles,
-        string $folder,
-        ImageConverterService $imageConverterService,
-        string $disk = 'private'
-    ): array {
-        // If no new files, keep old ones
-        if (empty($newFiles) || !is_array($newFiles)) {
-            return $oldFiles ?? [];
-        }
+    $paths = [];
 
-        // Delete old files
-        if (!empty($oldFiles) && is_array($oldFiles)) {
-            foreach ($oldFiles as $oldFile) {
-                if ($oldFile && Storage::disk($disk)->exists($oldFile)) {
-                    Storage::disk($disk)->delete($oldFile);
-                }
+    $id=1 ;
+    foreach ($files as $file) {
+        $storedPath = $imageConverterService->convertAndStore($file, $folder);
+
+        $paths[] = [
+            "id" => $id++,                   //uniqid(),           // unique identifier for frontend tracking
+            "url" => $storedPath,       // path returned from converter
+        ];
+    }
+
+    return $paths;
+}
+
+/**
+ * Update multiple files (delete old files and upload new ones)
+ */
+public function updateMultipleFiles(
+    ?array $newFiles,
+    ?array $oldFiles,
+    string $folder,
+    ImageConverterService $imageConverterService,
+    string $disk = 'private'
+): array {
+    // Delete old files if they exist
+    if (!empty($oldFiles) && is_array($oldFiles)) {
+        foreach ($oldFiles as $oldFileObj) {
+            if (!empty($oldFileObj['url']) && Storage::disk($disk)->exists($oldFileObj['url'])) {
+                Storage::disk($disk)->delete($oldFileObj['url']);
             }
         }
-
-        // Upload new files
-        return $this->uploadMultipleFiles(
-            $newFiles,
-            $folder,
-            $imageConverterService
-        );
     }
 
-  
-    public function deleteMultipleFiles(
-        ?array $files,
-        string $disk = 'private'
-    ): bool {
-        if (empty($files) || !is_array($files)) {
-            return false;
-        }
+    // Upload new files and return them as array of objects
+    return $this->uploadMultipleFiles(
+        $newFiles,
+        $folder,
+        $imageConverterService,
+        $disk
+    );
+}
 
-        foreach ($files as $file) {
-            if ($file && Storage::disk($disk)->exists($file)) {
-                Storage::disk($disk)->delete($file);
-            }
-        }
-
-        return true;
+/**
+ * Delete multiple files
+ */
+public function deleteMultipleFiles(
+    ?array $files,
+    string $disk = 'private'
+): bool {
+    if (empty($files) || !is_array($files)) {
+        return false;
     }
+
+    foreach ($files as $fileObj) {
+        if (!empty($fileObj['url']) && Storage::disk($disk)->exists($fileObj['url'])) {
+            Storage::disk($disk)->delete($fileObj['url']);
+        }
+    }
+
+    return true;
+}
+
+    
     
 }

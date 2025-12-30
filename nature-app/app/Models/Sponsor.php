@@ -39,11 +39,10 @@ class Sponsor extends Model
 
 
 
-
-    public function award()
-    {
-        return $this->belongsTo(Award::class);
-    }
+        public function awards()
+        {
+            return $this->belongsToMany(Award::class, 'award_sponsor');
+        }
 
 
 

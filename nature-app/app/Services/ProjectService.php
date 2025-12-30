@@ -8,6 +8,7 @@ use App\Traits\HandlesLocalization;
 use App\Traits\HandlesMultipleFileUpload;
 use App\Traits\HandlesUnlocalized;
 use App\Traits\LocalizesData;
+use App\Traits\SyncRelations;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +16,8 @@ class ProjectService
 {
 
 
-    use HandlesFileUpload,HandlesMultipleFileUpload,HandlesLocalization,HandlesUnlocalized,LocalizesData;
+    use HandlesFileUpload,HandlesMultipleFileUpload,HandlesLocalization,
+    HandlesUnlocalized,LocalizesData,SyncRelations;
 
    
 
@@ -44,11 +46,10 @@ class ProjectService
     $data['gallery'] = $this->uploadMultipleFiles(   $data['gallery'] ?? null,  'projects',$this->imageConverterService);
      
     $project= $this->projectRepository->create($data);
+     
+    $this->syncRelation($project, 'services', $data['service_ids'] ?? []);
 
-if (!empty($data['service_ids'])) {
-    $project->services()->sync($data['service_ids']); 
-}
-   return $project ;
+    return $project ;
 
     }
 
@@ -99,11 +100,8 @@ if (!empty($data['service_ids'])) {
         );
 
 
-        if (!empty($data['service_ids'])) {
-        $project->services()->sync($data['service_ids'] ?? []);
-
-        }
-
+        $this->syncRelation($project, 'services', $data['service_ids'] ?? []);
+    
         $project->save();
 
         return $project;
@@ -113,6 +111,7 @@ if (!empty($data['service_ids'])) {
     public function deleteProject(string $id)
     {
         $project = $this->projectRepository->find($id);
+        
         if (!$project) {
             return false;
         }

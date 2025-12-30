@@ -69,7 +69,7 @@ class ProjectController extends Controller
             ], 404);
         }
 
-         $project->load(['city', 'country','services']);
+         $project->load(['city', 'country','services','metrics']);
 
 
         return response()->json([

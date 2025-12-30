@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 
-class ValidateSponsor
+
+class ValidateProjectMetric
 {
     /**
      * Handle an incoming request.
@@ -16,19 +17,18 @@ class ValidateSponsor
      */
     public function handle(Request $request, Closure $next): Response
     {
-            $rules = [
-    
-                
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'name' => ['required', 'string',"min:3",'max:255'],
-                'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:7000'],
-              
-    
         
-            ];
+        $rules = [
+            'metric_name' => ['required','string','max:255'],
+            'metric_value' => ['required','string','max:255'],
+            'trend' => ['nullable','in:up,down,stable'],
+            'project_id' => ['required','uuid','exists:projects,id'],
+        ];
 
 
-            
+        
+
+                       
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -39,12 +39,8 @@ class ValidateSponsor
         }
 
 
-
-
-
         return $next($request);
 
 
-      
     }
 }
