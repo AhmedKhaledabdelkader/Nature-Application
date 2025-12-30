@@ -30,15 +30,15 @@ class AwardService
     public function createAward(array $data) 
     {
         
-        $locale = app()->getLocale();
+    $locale = app()->getLocale();
 
-        $this->localizeFields($data,['title','description','url','organization_name'],$locale);
+    $this->localizeFields($data,['title','description','organization_name'],$locale);
 
     $data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
-    $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
-    $data["content_file"]=$this->uploadContentFile($data["content_file"]??null,"awards/contents");
 
-        return $this->awardRepository->create($data);
+    $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
+
+    return $this->awardRepository->create($data);
 
         
     }
@@ -47,25 +47,25 @@ class AwardService
 
      public function updateAward(string $id, array $data)
     {
-        $locale = app()->getLocale();
+    $locale = app()->getLocale();
 
 
-        $award = $this->awardRepository->find($id);
+    $award = $this->awardRepository->find($id);
 
-        if (!$award) {
+    if (!$award) {
             return null;
         }
 
     
-        $this->setLocalizedFields($award, $data, ['title','description','url','organization_name'],$locale);  
+    $this->setLocalizedFields($award, $data, ['title','description','organization_name'],$locale);  
 
-        $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
+    $this->setUnlocalizedFields($award, $data, ['year']);
 
-        $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
-        $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
+     $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
 
-       $award->content_file=$this->updateContentFile($data["content_file"]??null,$award->content_file,"awards/contents");
- 
+    $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
+     $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
+
         $award->save();
 
         return $award;
@@ -83,7 +83,9 @@ class AwardService
 
     public function getAwardById(string $id)
     {
+
         return $this->awardRepository->findWithSponsors($id);
+
     }
 
 
@@ -101,19 +103,10 @@ class AwardService
 
         $this->deleteFile($award->image);
         $this->deleteFile($award->organization_logo);
-        $this->deleteContentFile($award->content_file) ;
+       
         
         return $this->awardRepository->delete($id);
     }
-
-
-
-
-
-
-
-
-
 
 
 

@@ -18,6 +18,8 @@ class AwardController extends Controller
     }
 
 
+
+    
     public function store(Request $request)
     {
         $award = $this->awardService->createAward($request->all());
@@ -30,6 +32,8 @@ class AwardController extends Controller
 
         
     }
+
+
 
 
     public function update(Request $request, string $id)
@@ -54,6 +58,8 @@ class AwardController extends Controller
     
     }
 
+
+
     public function index(Request $request)
     {
         $awards = $this->awardService->getAllAwards($request->all());
@@ -64,6 +70,8 @@ class AwardController extends Controller
             'result' => AwardResource::collection($awards)
         ], 200);
     }
+
+
 
 
     
@@ -83,6 +91,8 @@ class AwardController extends Controller
             'message' => 'Award deleted successfully'
         ]);
     }
+
+
 
 public function show(string $id)
     {

@@ -24,11 +24,11 @@ class ValidateAward
                 'locale'=> ['sometimes', 'in:ar,en'],
                 'title' => ['required', 'string',"min:3",'max:255'],
                 'description' => ['required', 'string',"min:10"],
-                'url' => ['required', 'url', 'max:255'],
+                'year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . (date('Y') + 1)],
                 'organization_name' => ['required', 'string', 'max:255'],
                 'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-                'organization_logo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-                'content_file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+                 'organization_logo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            
     
         
             ];

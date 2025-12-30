@@ -16,6 +16,7 @@ class AwardRepository implements AwardRepositoryInterface
     public function find(string $id)
     {
         return Award::find($id);
+
     }
 
 public function findWithSponsors(string $id)

@@ -24,8 +24,6 @@ class UserController extends Controller
     public function register(Request $request)
     {
 
-   
-
         $user=$this->userService->createUser($request->all()) ; 
 
        return response()->json([

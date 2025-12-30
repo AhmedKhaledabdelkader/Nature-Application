@@ -60,7 +60,7 @@ $step=$this->stepRepository->create($data);
         $locale = app()->getLocale();
 
         $step = $this->stepRepository->find($data["stepId"]);
-         $service = $this->serviceRepository->find($data["serviceId"]);
+        $service = $this->serviceRepository->find($data["serviceId"]);
 
         if (!$step || !$service) {
             return null;
@@ -93,12 +93,10 @@ $step=$this->stepRepository->create($data);
             return null;
         }
 
-
         $this->deleteFile($step->image);
 
         $service->steps()->detach($data["stepId"]);
 
-        
         $this->stepRepository->delete($data["stepId"]);
 
         return true;

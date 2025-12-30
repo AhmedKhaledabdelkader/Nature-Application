@@ -21,8 +21,7 @@ class AwardResource extends JsonResource
             'image' => $this->image,
             'organizationName' => $this->organization_name,
             'organizationLogo' => $this->organization_logo,
-            'url' => $this->url,
-            'contentFile' => $this->content_file,
+            'year' => $this->year,
              'sponsors' => SponsorResource::collection(
                 $this->whenLoaded('sponsors')
             ),

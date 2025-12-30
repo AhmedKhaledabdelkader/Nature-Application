@@ -16,10 +16,11 @@ return new class extends Migration
             $table->json('title');
             $table->json('description');
             $table->string('image');
-            $table->json('url');
+            $table->string('year');
+          //  $table->json('url');
             $table->json('organization_name');
             $table->string('organization_logo');
-            $table->string('content_file') ;
+           // $table->string('content_file') ;
             $table->timestamps();
         });
     }

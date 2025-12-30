@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
@@ -20,16 +21,15 @@ class Award extends Model
         'title',
         'description',
         'image',
-        'url',
         'organization_name',
         'organization_logo',
-        'content_file',
+        'year',
+      
     ];
 
     public $translatable = [
         'title',
         'description',
-        'url',
         'organization_name',
     ];
 
@@ -49,6 +49,20 @@ class Award extends Model
             }
         });
     }
+
+
+// this a real important part to delete related sponsors' logos when an award is deleted
+
+    protected static function booted()
+{
+    static::deleting(function ($award) {
+
+        foreach ($award->sponsors as $sponsor) {
+       
+            Storage::delete($sponsor->logo);
+        }
+    });
+}
 
 
     public function sponsors()
