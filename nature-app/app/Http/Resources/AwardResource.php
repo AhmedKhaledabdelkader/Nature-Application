@@ -22,7 +22,7 @@ class AwardResource extends JsonResource
             'organizationName' => $this->organization_name,
             'organizationLogo' => $this->organization_logo,
             'year' => $this->year,
-             'sponsors' => SponsorResource::collection(
+            'sponsors' => SponsorResource::collection(
                 $this->whenLoaded('sponsors')
             ),
             'createdAt' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,

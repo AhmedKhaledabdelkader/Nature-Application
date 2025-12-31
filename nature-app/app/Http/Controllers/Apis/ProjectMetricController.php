@@ -58,6 +58,34 @@ class ProjectMetricController extends Controller
 
 
 
+    public function index()
+    {
+        $projectMetrics = $this->projectMetricService->getAllProjectMetrics();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Project metrics retrieved successfully',
+            'result' => ProjectMetricResource::collection($projectMetrics),
+        ], 200);
+    }
+
+
+    public function destroy($id)
+    {
+        $deleted = $this->projectMetricService->deleteProjectMetric($id);
+
+        if (!$deleted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Project metric not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Project metric deleted successfully',
+        ], 200);
+    }
 
 
 

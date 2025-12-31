@@ -62,13 +62,13 @@ class ProjectService
         return $this->projectRepository->all($page, $size);
     }
 
-    // Get a single project
+   
     public function getProjectById(string $id)
     {
         return $this->projectRepository->find($id);
     }
 
-    // Update project
+    
     public function updateProject(string $id, array $data)
     {
 
@@ -99,7 +99,6 @@ class ProjectService
             $this->imageConverterService
         );
 
-
         $this->syncRelation($project, 'services', $data['service_ids'] ?? []);
     
         $project->save();
@@ -107,7 +106,7 @@ class ProjectService
         return $project;
     }
 
-    // Delete project
+  
     public function deleteProject(string $id)
     {
         $project = $this->projectRepository->find($id);

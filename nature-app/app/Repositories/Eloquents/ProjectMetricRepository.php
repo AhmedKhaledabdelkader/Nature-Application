@@ -18,5 +18,26 @@ class ProjectMetricRepository implements ProjectMetricRepositoryInterface
         return Project_Metrics::find($id);
     }
 
+
+    
+    public function delete(string $id): bool
+{
+    $project_metric = Project_Metrics::find($id);
+    
+    if ($project_metric) {
+        return $project_metric->delete();
+    }
+    
+    return false;
+}
+
+
+    public function getAll()
+    {
+        return Project_Metrics::all();
+    }
+
+
+
    
 }

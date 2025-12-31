@@ -59,6 +59,23 @@ class ProjectMetricService
     }
 
 
+    public function deleteProjectMetric(string $id)
+    {
+        $project_metric = $this->projectMetricRepository->find($id);
+
+        if (!$project_metric) {
+            return false;
+        }
+
+        return $this->projectMetricRepository->delete($id);
+    }
+
+
+    public function getAllProjectMetrics()
+    {
+        return $this->projectMetricRepository->getAll();
+    }
+
 
 
 
