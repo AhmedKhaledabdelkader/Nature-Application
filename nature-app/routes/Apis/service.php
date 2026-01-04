@@ -15,6 +15,9 @@ Route::post('/{id}', [ProvidedServiceController::class, 'update'])->middleware([
 Route::get('/', [ProvidedServiceController::class, 'index'])->middleware("validate.pagination","localize");
 
 
+Route::get('/names', [ProvidedServiceController::class, 'getAllServicesNames'])->middleware("localize");
+
+
 Route::get('/{id}', [ProvidedServiceController::class, 'show'])->middleware(["localize"]);
 
 

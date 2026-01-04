@@ -26,8 +26,17 @@ class ServiceResource extends JsonResource
             'updatedAt' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
         ];
 
-
-
-       
+  
     }
+
+    
+    public function onlyIdAndTitle(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+        ];
+    }
+
+
 }

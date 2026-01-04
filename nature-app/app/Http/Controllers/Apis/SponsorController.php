@@ -68,6 +68,24 @@ public function index(Request $request)
         ], 200);
     }
 
+public function getAllSponsorsNames(){
+
+
+    $sponsors = $this->sponsorService->getallSponsorsNames();
+
+    return response()->json([
+        'status' => 'success',
+        'message'=>"retrieving sponsors names successfully",
+        'result' =>SponsorResource::collection($sponsors)->map->onlyIdAndName()
+    ]);
+
+
+
+
+
+}
+
+
 
 
   public function destroy(string $id)

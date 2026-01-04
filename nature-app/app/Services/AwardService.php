@@ -31,19 +31,20 @@ class AwardService
     public function createAward(array $data) 
     {
         
-$locale = app()->getLocale();
+   $locale = app()->getLocale();
 
-$this->localizeFields($data,['title','description','organization_name'],$locale);
+   $this->localizeFields($data,['title','description','organization_name'],$locale);
 
-$data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
+   $data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
 
-$data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', $this->imageConverterService);
+   $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', 
+   $this->imageConverterService);
 
-$award= $this->awardRepository->create($data);
+   $award= $this->awardRepository->create($data);
 
-$this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
+  $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
 
-return $award ;
+ return $award ;
 
 }
 
@@ -68,28 +69,32 @@ return $award ;
 
     $this->setUnlocalizedFields($award, $data, ['year']);
 
-     $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
+    $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
 
     $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
      $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
 
 
-      $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
+    $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
 
-        $award->save();
+    $award->save();
 
-        return $award;
+    return $award;
+
     }
 
 
     public function getAllAwards()
     {
+
     $size = $data['size'] ?? 10;
     $page = $data['page'] ?? 1;
 
 
-        return $this->awardRepository->all($page, $size);
+    return $this->awardRepository->all($page, $size);
+
     }
+    
 
     public function getAwardById(string $id)
     {

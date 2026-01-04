@@ -25,6 +25,14 @@ class ProvidedServiceRepository implements ProvidedServiceRepositoryInterface
         return Provided_Service::query()->paginate($size, ['*'], 'page', $page);
     }
 
+        public function getAllServicesNames()
+        {
+            return Provided_Service::all(['id', 'title']);
+        }
+
+
+
+
     
 
     public function delete(string $id): bool

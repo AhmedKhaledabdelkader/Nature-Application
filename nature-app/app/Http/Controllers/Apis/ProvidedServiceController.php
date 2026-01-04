@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
+use App\Models\Provided_Service;
 use App\Services\ProvidedServiceService;
 use Illuminate\Http\Request;
 
@@ -48,6 +49,18 @@ class ProvidedServiceController extends Controller
     ]);
 }
 
+
+public function getAllServicesNames()
+{
+    $services = $this->providedService->getAllServicesNames();
+
+    return response()->json([
+        'status' => 'success',
+        'message'=>"retrieving services names successfully",
+        'result' =>ServiceResource::collection($services)->map->onlyIdAndTitle()
+    ]);
+}
+
 public function show($id)
 {
     $service = $this->providedService->getServiceById($id);
@@ -62,6 +75,7 @@ public function show($id)
         'result'=>new ServiceResource($service)
     ]);
 }
+
 
 public function update(Request $request, $id)
 {

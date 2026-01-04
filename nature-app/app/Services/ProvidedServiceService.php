@@ -51,6 +51,15 @@ class ProvidedServiceService
         return $this->providedRepository->find($id);
     }
 
+
+
+
+public function getAllServicesNames()
+    {
+        return $this->providedRepository->getAllServicesNames();
+    }
+
+
     // Update
     public function updateService(string $id, array $data)
     {

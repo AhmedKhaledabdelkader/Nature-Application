@@ -37,6 +37,12 @@ class SponsorRepository implements SponsorRepositoryInterface
     return false;
 }
 
+    public function getAllSponsorsNames()
+    {
+        return Sponsor::all(['id', 'name']);
+    }
+
+
 
 
  

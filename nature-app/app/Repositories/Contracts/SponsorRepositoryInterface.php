@@ -11,6 +11,7 @@ interface SponsorRepositoryInterface
 
     public function getAll($page,$size);
 
+    public function getAllSponsorsNames() ;
 
     public function delete(string $id);
 

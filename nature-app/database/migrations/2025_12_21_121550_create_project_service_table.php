@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('project_provided__service', function (Blueprint $table) {
             $table->uuid('project_id');
+
             $table->uuid('provided__service_id');
+            
             $table->primary(['project_id', 'provided__service_id']);
 
             $table->foreign('project_id')
@@ -23,6 +25,7 @@ return new class extends Migration
             $table->foreign('provided__service_id')
                 ->references('id')->on('provided__services')
                 ->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

@@ -73,8 +73,18 @@ public function getAllSponsors(array $data){
 return $this->sponsorRepository->getAll($page,$size) ;
 
 
+
 }
-    
+
+
+public function getallSponsorsNames()
+{
+    return $this->sponsorRepository->getAllSponsorsNames();
+}
+
+
+
+
 
 
 
