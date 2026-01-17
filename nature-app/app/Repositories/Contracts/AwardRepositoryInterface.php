@@ -13,6 +13,5 @@ public function create(array $data);
 
 public function delete(string $id);
   
-public function findWithSponsors(string $id);
 
 }

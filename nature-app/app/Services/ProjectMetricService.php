@@ -51,7 +51,6 @@ class ProjectMetricService
 
     $project_metric->save();
 
-
     return $project_metric;
 
 

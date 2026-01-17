@@ -20,9 +20,10 @@ class ValidateClient
           $rules = [
     
                 
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'name' => ['required', 'string',"min:3",'max:255'],
-                'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:9000'],
+                
+                'name_en' => ['nullable', 'string',"min:3",'max:255'],
+                'name_ar' => ['nullable', 'string',"min:3",'max:255'],
+                'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:3072'],//5120
         
             ];
 

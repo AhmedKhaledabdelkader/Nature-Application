@@ -25,7 +25,6 @@ public function findCountry(string $id){
 
     return Country::find($id);
 
-
 }
 
 
@@ -35,7 +34,7 @@ public function findCountry(string $id){
               
         ->withCount('projects')    
         ->has('projects')          
-        ->paginate($size, ['*'], 'page', $page);
+        ->paginate($size,['*'], 'page', $page);
 }
 
 

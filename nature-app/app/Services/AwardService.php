@@ -6,6 +6,7 @@ use App\Repositories\Contracts\AwardRepositoryInterface;
 use App\Repositories\Eloquents\AwardRepository;
 use App\Traits\HandlesFileUpload;
 use App\Traits\HandlesLocalization;
+use App\Traits\HandlesMultipleFileUpload;
 use App\Traits\HandlesUnlocalized;
 use App\Traits\LocalizesData;
 use App\Traits\SyncRelations;
@@ -17,7 +18,7 @@ class AwardService
 {
 
 
-    use HandlesFileUpload,HandlesLocalization,LocalizesData,HandlesUnlocalized,SyncRelations ;
+    use HandlesFileUpload,HandlesLocalization,HandlesMultipleFileUpload,LocalizesData,HandlesUnlocalized,SyncRelations ;
 
     public $awardRepository;
     
@@ -33,18 +34,18 @@ class AwardService
         
    $locale = app()->getLocale();
 
-   $this->localizeFields($data,['title','description','organization_name'],$locale);
+   $this->localizeFields($data,['name','description'],$locale);
 
    $data["image"]=$this->uploadFile($data['image'] ?? null, 'awards/images', $this->imageConverterService);
 
-   $data["organization_logo"]=$this->uploadFile($data['organization_logo'] ?? null, 'awards/organizations/logos', 
-   $this->imageConverterService);
+
+    $data['organizations_logos'] = $this->uploadMultipleFiles($data['organizations_logos'] ?? null
+    ,'awards/organizations/logos',$this->imageConverterService);
 
    $award= $this->awardRepository->create($data);
 
-  $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
 
- return $award ;
+   return $award ;
 
 }
 
@@ -55,6 +56,7 @@ class AwardService
 
      public function updateAward(string $id, array $data)
     {
+
     $locale = app()->getLocale();
 
 
@@ -65,17 +67,14 @@ class AwardService
         }
 
     
-    $this->setLocalizedFields($award, $data, ['title','description','organization_name'],$locale);  
+    $this->setLocalizedFields($award, $data, ['name','description'],$locale);  
 
-    $this->setUnlocalizedFields($award, $data, ['year']);
+    $this->setUnlocalizedFields($award, $data, ['year','status']);
 
     $award->image = $this->updateFile($data['image'] ??null,$award->image,'awards/images',$this->imageConverterService);
 
-    $award->organization_logo = $this->updateFile($data['organization_logo'] ??null,
-     $award->organization_logo,'awards/organizations/logos',$this->imageConverterService);
-
-
-    $this->syncRelation($award, 'sponsors', $data['sponsor_ids'] ?? []);
+    $award->organizations_logos = $this->updateMultipleFiles($data['organizations_logos'] ??null,
+     $award->organizations_logos,'awards/organizations/logos',$this->imageConverterService);
 
     $award->save();
 
@@ -99,7 +98,7 @@ class AwardService
     public function getAwardById(string $id)
     {
 
-        return $this->awardRepository->findWithSponsors($id);
+        return $this->awardRepository->find($id);
 
     }
 
@@ -117,11 +116,12 @@ class AwardService
         }
 
         $this->deleteFile($award->image);
-        $this->deleteFile($award->organization_logo);
-       
-         $award->sponsors()->detach();
+
+        $this->deleteMultipleFiles($award->organizations_logos);
 
         return $this->awardRepository->delete($id);
+
+
     }
 
 

@@ -19,20 +19,21 @@ class ValidateTestimonial
 
 
         
-         $rules = [
-    
-                
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'feedback' => ['required', 'string',"min:3",'max:255'],
-                'name' => ['required', 'string',"min:3",'max:255'],
-                'job_title' => ['required', 'string',"min:3",'max:255'],
-                'company_name' => ['required', 'string',"min:3",'max:255'],
-                
-               
+       $rules = [
 
-    
-        
-            ];
+    // Client Name
+    'client_name_en' => 'nullable|string|min:2|max:255',
+    'client_name_ar' => 'nullable|string|min:2|max:255',
+
+    // Job Title
+    'job_title_en' => 'nullable|string|min:2|max:255',
+    'job_title_ar' => 'nullable|string|min:2|max:255',
+
+    // Testimonial (text fields)
+    'testimonial_en' => 'nullable|string|min:5|max:5000',
+    'testimonial_ar' => 'nullable|string|min:5|max:5000',
+
+];
 
 
             

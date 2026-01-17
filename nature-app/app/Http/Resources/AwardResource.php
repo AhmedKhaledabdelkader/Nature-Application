@@ -16,17 +16,18 @@ class AwardResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'name' => $this->name,
             'description' => $this->description,  
             'image' => $this->image,
-            'organizationName' => $this->organization_name,
-            'organizationLogo' => $this->organization_logo,
+            'organizationLogos' => $this->organizations_logos,
             'year' => $this->year,
-            'sponsors' => SponsorResource::collection(
-                $this->whenLoaded('sponsors')
-            ),
-            'createdAt' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
-            'updatedAt' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
+            'status'=>$this->status,           
+            'createdAt' => $this->created_at
+                ? $this->created_at->format('d/m/Y')
+                : null,
+            'updatedAt' => $this->updated_at
+                ? $this->updated_at->format('d/m/Y')
+                : null,
         ];
         
     }

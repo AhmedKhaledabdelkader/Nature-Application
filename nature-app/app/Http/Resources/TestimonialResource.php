@@ -14,16 +14,23 @@ class TestimonialResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $locale = app()->getLocale(); // 'ar' or 'en'
 
          
-         return [
-            'id' => $this->id,
-            'feedback' => $this->feedback, 
-            'name' => $this->name,
-            'jobTitle'=>$this->job_title,
-            'companyName' => $this->company_name , // <--- access pivot valu
-            'createdAt' => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
-            'updatedAt' => $this->updated_at ? $this->updated_at->format('Y-m-d H:i:s') : null,
+
+        return [
+            'id'   => $this->id,
+            'clientName' => $this->{"client_name_{$locale}"},
+            'jobTitle' => $this->{"job_title_{$locale}"},
+            'Testimonial' => $this->{"testimonial_{$locale}"},
+            'status'=>$this->status,
+            
+            'createdAt' => $this->created_at
+                ? $this->created_at->format('d/m/Y')
+                : null,
+            'updatedAt' => $this->updated_at
+                ? $this->updated_at->format('d/m/Y')
+                : null,
         ];
         
     }

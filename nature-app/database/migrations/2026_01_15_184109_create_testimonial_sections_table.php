@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('awards', function (Blueprint $table) {
+        Schema::create('testimonial_sections', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->json('name');
-            $table->json('description');
-            $table->string('image');
-            $table->string('year');
-            $table->json('organizations_logos');
+            $table->string('client_name_en')->nullable();
+            $table->string('client_name_ar')->nullable();
+            $table->string('job_title_en')->nullable();
+            $table->string('job_title_ar')->nullable();
+            $table->text('testimonial_en')->nullable();
+            $table->text('testimonial_ar')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('awards');
+        Schema::dropIfExists('testimonial_sections');
     }
 };

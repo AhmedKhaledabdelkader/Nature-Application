@@ -18,20 +18,26 @@ class Award extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'title',
+        'name',
         'description',
         'image',
-        'organization_name',
-        'organization_logo',
+        'organizations_logos',
         'year',
+        'status'
       
     ];
 
     public $translatable = [
-        'title',
+        'name',
         'description',
-        'organization_name',
     ];
+
+    protected $casts = [
+    'organizations_logos' => 'array',
+    'status'=>'boolean'
+    
+];
+
 
  
      public function setLocalizedValue(string $field, string $locale, $value): void
@@ -49,26 +55,5 @@ class Award extends Model
             }
         });
     }
-
-
-// this a real important part to delete related sponsors' logos when an award is deleted
-/*
-    protected static function booted()
-{
-    static::deleting(function ($award) {
-
-        foreach ($award->sponsors as $sponsor) {
-       
-            Storage::delete($sponsor->logo);
-        }
-    });
-}
-*/
-
-    public function sponsors()
-    {
-        return $this->belongsToMany(Sponsor::class, 'award_sponsor');
-    }
-
-    
+ 
 }

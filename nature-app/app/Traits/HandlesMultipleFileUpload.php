@@ -44,16 +44,25 @@ public function updateMultipleFiles(
     ImageConverterService $imageConverterService,
     string $disk = 'private'
 ): array {
-    // Delete old files if they exist
+
+    // If no new files → keep old ones
+    if (empty($newFiles) || !is_array($newFiles)) {
+        return $oldFiles ?? [];
+    }
+
+    // Delete old files ONLY when new files exist
     if (!empty($oldFiles) && is_array($oldFiles)) {
         foreach ($oldFiles as $oldFileObj) {
-            if (!empty($oldFileObj['url']) && Storage::disk($disk)->exists($oldFileObj['url'])) {
+            if (
+                !empty($oldFileObj['url']) &&
+                Storage::disk($disk)->exists($oldFileObj['url'])
+            ) {
                 Storage::disk($disk)->delete($oldFileObj['url']);
             }
         }
     }
 
-    // Upload new files and return them as array of objects
+    // Upload new files
     return $this->uploadMultipleFiles(
         $newFiles,
         $folder,

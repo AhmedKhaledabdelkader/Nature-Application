@@ -17,8 +17,6 @@ class Country extends Model
 
     protected $fillable = ['name', 'logo'];
 
-
-
     public $translatable = ['name'];
 
 

@@ -21,15 +21,20 @@ class ValidateAward
             $rules = [
     
                 
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'title' => ['required', 'string',"min:3",'max:255'],
-                'description' => ['required', 'string',"min:10"],
-                'year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . (date('Y') + 1)],
-                'organization_name' => ['required', 'string', 'max:255'],
-                'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-                'organization_logo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-                'sponsor_ids'   => ['required', 'array'],
-                'sponsor_ids.*' => ['uuid', 'exists:sponsors,id'], 
+            'locale'=> ['sometimes', 'in:ar,en'],
+            'name' => ['required', 'string',"min:3",'max:255'],
+            'description' => ['required', 'string',"min:10"],
+            'year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . (date('Y') + 1)],
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:3072'],
+            'status' => ['sometimes', 'boolean'],
+            'organizations_logos' => ['required', 'array', 'min:1'],
+            'organizations_logos.*' => [
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:3072'
+            ],
+
+              
         ];
             
     

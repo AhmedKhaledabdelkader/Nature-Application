@@ -39,9 +39,9 @@ class AwardController extends Controller
     public function update(Request $request, string $id)
     {
 
-        $country = $this->awardService->updateAward($id, $request->all());
+        $award = $this->awardService->updateAward($id, $request->all());
 
-        if ($country==null) {
+        if ($award==null) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Award not found'
@@ -51,7 +51,7 @@ class AwardController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Award updated successfully',
-            'result' => new AwardResource($country)
+            'result' => new AwardResource($award)
         ], 200);
 
 
