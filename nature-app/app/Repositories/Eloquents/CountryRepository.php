@@ -38,6 +38,16 @@ public function findCountry(string $id){
 }
 
 
+   public function allCountries($page, $size)
+{
+    return Country::query()->paginate($size,['*'], 'page', $page);
+}
+
+
+
+
+
+
     public function update(string $id, array $data)
     {
         $country = Country::find($id);

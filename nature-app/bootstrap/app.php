@@ -60,11 +60,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
      
         $exceptions->render(function (Throwable $e, $request) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
-        });
+    return response()->json([
+        'status'  => 'error',
+        'message' => $e->getMessage(),
+        'file'    => $e->getFile(),
+        'line'    => $e->getLine(),
+        'trace'   => $e->getTrace(), // optional, full stack trace
+    ], 500);
+});
+
 
 
     })->create();

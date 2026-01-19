@@ -48,7 +48,7 @@ public function getAllCountries(array $data)
     $size = $data['size'] ?? 10;
     $page = $data['page'] ?? 1;
 
-    return $this->countryRepository->all($page, $size);
+    return $this->countryRepository->allCountries($page, $size);
 }
 
 

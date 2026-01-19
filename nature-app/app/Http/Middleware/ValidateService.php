@@ -16,23 +16,45 @@ class ValidateService
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $rules = [
 
-
-         $rules = [
-    
-                
-                'locale'=> ['sometimes', 'in:ar,en'],
-                'title' => ['required', 'string',"min:3",'max:400'],
-                'sub_title' => ['required', 'string',"min:3",'max:400'],
-                'color' => ['required', 'string',"min:2",'max:200'],
-               
-
-    
-        
-            ];
-
+            // Base fields
+            'locale' => ['sometimes', 'in:ar,en'],
+            'name' => ['required', 'string', 'min:3', 'max:400'],
+            'tagline' => ['required', 'string', 'min:3', 'max:400'],
 
             
+            'steps' => ['nullable', 'array'],
+            'steps.*.title' => ['required', 'string', 'min:3', 'max:400'],
+            'steps.*.description' => ['required', 'string', 'min:3'],       
+            'steps.*.image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+
+
+            'benefits' => ['nullable', 'array'],
+            'benefits.*.title' => ['required', 'string', 'min:3'],         
+            'benefits.*.tagline' => ['required', 'string', 'min:3'],
+            'benefits.*.body' => ['required', 'string', 'min:3'],
+           'benefits.*.insights' => ['nullable', 'array'],        
+            'benefits.*.insights.*.metric_title' => ['required', 'string', 'min:1'],
+            'benefits.*.insights.*.metric_number' => ['required', 'numeric'],
+
+            // Values
+            'values' => ['nullable', 'array'],
+            'values.*.title' => ['required', 'string', 'min:3'],
+            'values.*.description' => ['required', 'string', 'min:3'],
+            'values.*.tools' => ['nullable', 'array'],
+            'values.*.tools.*' => ['string'],
+
+            // Impacts
+            'impacts' => ['nullable', 'array'],
+            'impacts.*.title' => ['required', 'string', 'min:3'],
+            'impacts.*.description' => ['required', 'string', 'min:3'],
+            'impacts.*.image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+
+            // Optional fields
+            'status' => ['sometimes', 'boolean'],
+        ];
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -42,16 +64,6 @@ class ValidateService
             ], 422);
         }
 
-
-
-
-
         return $next($request);
-
-
-
-
-
-        
     }
 }
