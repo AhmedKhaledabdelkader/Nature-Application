@@ -44,6 +44,8 @@ class ProjectController extends Controller
     {
         $projects = $this->projectService->getAllProjects($request->all());
 
+          $projects->load(['city', 'country','services']);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Projects retrieved successfully',
@@ -69,7 +71,7 @@ class ProjectController extends Controller
             ], 404);
         }
 
-         $project->load(['city', 'country','services','metrics']);
+         $project->load(['city', 'country','services']);
 
 
         return response()->json([

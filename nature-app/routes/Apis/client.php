@@ -15,5 +15,7 @@ Route::post('/{id}', [ClientController::class, 'update'])->middleware(["localize
 Route::get('/', [ClientController::class, 'index'])->middleware("validate.pagination","localize");
 
 
+Route::get('/{id}', [ClientController::class, 'show']);
+
 
 Route::delete('/{id}', [ClientController::class, 'destroy']);

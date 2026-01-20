@@ -55,6 +55,17 @@ public function show(string $id)
     
 }
 
+
+
+
+
+
+
+
+
+
+
+
 public function index(Request $request)
     {
         $data=$request->all();

@@ -21,17 +21,17 @@ class AuthenticationMiddleware
         $token = $request->bearerToken();
 
         if (! $token) {
-            return response()->json(['error' => 'No token provided'], 401);
+            return response()->json(['status'=>'error','error' => 'No token provided'], 401);
         }
 
         $accessToken = PersonalAccessToken::findToken($token);
 
         if (! $accessToken) {
-            return response()->json(['error' => 'Invalid token'], 401);
+            return response()->json(['status'=>'error','error' => 'Invalid token'], 401);
         }
 
         if ($accessToken->created_at->lt(now()->subDays(30))) {
-            return response()->json(['error' => 'Token expired'], 401);
+            return response()->json(['status'=>'error','error' => 'Token expired'], 401);
         }
 
        

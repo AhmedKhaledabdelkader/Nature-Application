@@ -6,13 +6,14 @@ use App\Models\ServiceV2;
 use App\Repositories\Contracts\ServiceV2RepositoryInterface;
 use App\Traits\HandlesFileUpload;
 use App\Traits\HandlesLocalization;
+use App\Traits\HandlesUnlocalized;
 use App\Traits\LocalizesData;
 
 class ServiceV2Service
 {
 
 
-    use HandlesFileUpload,LocalizesData,HandlesLocalization ;
+    use HandlesFileUpload,LocalizesData,HandlesLocalization,HandlesUnlocalized ;
 
     public $serviceV2Repository ;
 
@@ -48,10 +49,10 @@ public function addService(array $data)
                 );
             }
 
-            // Add ordering
-            $step['order'] = $i + 1; // human-friendly order starting from 1
+           
+            $step['order'] = $i + 1; 
         }
-        unset($step); // break reference
+        unset($step); 
     }
 
     // =========================
@@ -112,13 +113,13 @@ public function addService(array $data)
         unset($impact);
     }
 
-    // Ensure arrays are always defined
+    
     $data['steps'] = $data['steps'] ?? [];
     $data['benefits'] = $data['benefits'] ?? [];
     $data['values'] = $data['values'] ?? [];
     $data['impacts'] = $data['impacts'] ?? [];
 
-    // Create service
+    
     $service = ServiceV2::create($data);
 
     return $service;
@@ -148,6 +149,8 @@ public function updateService(array $data, string $id)
     // =========================
 
     $this->setLocalizedFields($service, $data, ['name', 'tagline'], $locale);
+
+    $this->setUnlocalizedFields($service,$data,['status']) ;
 
     // =========================
     // STEPS
@@ -307,11 +310,38 @@ public function deleteService(string $id)
 
 
 
+public function getAllServices(array $data){
+
+ $size = $data['size'] ?? 10;
+ $page = $data['page'] ?? 1;
+
+ return $this->serviceV2Repository->getAll($page,$size) ;
+
+
+}
+
+public function getAllPublishedServices(array $data){
+
+ $size = $data['size'] ?? 10;
+ $page = $data['page'] ?? 1;
+
+ return $this->serviceV2Repository->getAllPublishedServices($page,$size) ;
+
+
+}
 
 
 
 
 
+
+public function getAllServicesNames()
+{
+
+    return $this->serviceV2Repository->getAllServicesNames() ;
+
+
+}
 
 
 

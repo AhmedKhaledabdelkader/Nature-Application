@@ -27,10 +27,11 @@ class Project extends Model
         'gallery',
         'start_date',
         'end_date',
-        'result',
-        'project_reflected',
+        'results',
+        'metrics',
         'country_id',
         'city_id',
+        'status'
     ];
 
     protected $translatable = [
@@ -39,12 +40,13 @@ class Project extends Model
         'start_date',
         'end_date',
         'brief',
-        'result',
-        'project_reflected',
+    
     ];
 
     protected $casts = [
         'gallery' => 'array',
+        'results'=>'array',
+        'metrics'=>'array'
     ];
 
 
@@ -82,17 +84,12 @@ protected static function boot()
 
 
 
+
+
 public function services()
 {
-    return $this->belongsToMany(Provided_Service::class, 'project_provided__service');
+    return $this->belongsToMany(ServiceV2::class, 'project_service_v2_s', 'project_id', 'service_v2_id');
 }
-
-
-public function metrics()
-{
-    return $this->hasMany(Project_Metrics::class);
-}
-
 
 
 

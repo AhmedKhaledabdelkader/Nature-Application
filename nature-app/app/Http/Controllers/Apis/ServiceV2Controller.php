@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Apis;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
+use App\Http\Resources\SimpleServiceResource;
 use App\Services\ServiceV2Service;
 use Illuminate\Http\Request;
+
+
 
 class ServiceV2Controller extends Controller
 {
@@ -86,6 +90,45 @@ public function destroy($id)
     ]);
 }
 
+
+
+
+    public function index(Request $request)
+{
+    $services = $this->serviceV2Service->getAllServices($request->all());
+
+    return response()->json([
+        'status' => 'success',
+        'message'=>"retrieving services successfully",
+        'result' => SimpleServiceResource::collection($services)
+    ]);
+}
+
+
+
+    public function indexPublishedServices(Request $request)
+{
+    $services = $this->serviceV2Service->getAllPublishedServices($request->all());
+
+    return response()->json([
+        'status' => 'success',
+        'message'=>"retrieving published services successfully",
+        'result' => SimpleServiceResource::collection($services)
+    ]);
+}
+
+
+
+    public function indexPublishedServicesNames(Request $request)
+{
+    $services = $this->serviceV2Service->getAllServicesNames($request->all());
+
+    return response()->json([
+        'status' => 'success',
+        'message'=>"retrieving services names successfully",
+        'result' => SimpleServiceResource::collection($services)->map->onlyIdAndName()
+    ]);
+}
 
 
 

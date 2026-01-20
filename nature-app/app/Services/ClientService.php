@@ -78,6 +78,9 @@ return $this->clientRepository->getAll($page,$size) ;
 
 
 
+
+
+
 public function deleteClient(string $id)
 {
     $client = $this->clientRepository->find($id);

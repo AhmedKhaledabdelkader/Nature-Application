@@ -17,14 +17,11 @@ class ValidateProject
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'overview' => ['required', 'string', 'min:10'],
             'brief' => ['required', 'string', 'min:10'],
-            'result' => ['required', 'string', 'min:3'],
-            'project_reflected' => ['required', 'string', 'min:3'],
 
-            'start_date' => ['required', 'date_format:j M Y'],
-            'end_date' => ['required', 'date_format:j M Y', 'after_or_equal:start_date'],
+           'start_date' => ['required', 'date_format:d/m/Y'],
+            'end_date' => ['nullable', 'date_format:d/m/Y', 'after_or_equal:start_date'],
 
 
-            // Relations
             'country_id' => ['required', 'uuid', 'exists:countries,id'],
             'city_id' => ['required', 'uuid', 'exists:cities,id'],
 
@@ -51,8 +48,19 @@ class ValidateProject
                 'max:2048'
             ],
 
+              
+            'results' => ['nullable', 'array'],
+            'results.*.section_title' => ['required', 'string', 'min:3', 'max:400'],
+            'results.*.section_body' => ['required', 'string', 'min:3','max:10000'],    
+            
+            
+            'metrics' => ['nullable', 'array','max:3'],
+            'metrics.*.metric_title' => ['required', 'string', 'min:2', 'max:400'],
+            'metrics.*.metric_number' => ['required', 'string', 'min:1','max:300'],   
+            'metrics.*.metric_case' => ['required', 'string', 'min:2','max:300'], 
+
     'service_ids'   => ['required', 'array'], // must be an array
-    'service_ids.*' => ['uuid', 'exists:provided__services,id'], // each element must be a valid UUID that exists in services table
+    'service_ids.*' => ['uuid', 'exists:service_v2_s,id'], // each element must be a valid UUID that exists in services table
         ];
 
         $validator = Validator::make($request->all(), $rules);

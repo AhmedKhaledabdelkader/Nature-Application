@@ -15,12 +15,11 @@ class ServiceResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name ? $this->getTranslation('name', $locale) : null,
             'tagline' => $this->tagline ? $this->getTranslation('tagline', $locale) : null,
-
             'steps' => $this->formatSteps($locale),
             'benefits' => $this->formatBenefits($locale),
             'values' => $this->formatValues($locale),
             'impacts' => $this->formatImpacts($locale),
-
+            'status'=>$this->status ,
             'createdAt' => $this->created_at
                 ? $this->created_at->format('d/m/Y')
                 : null,

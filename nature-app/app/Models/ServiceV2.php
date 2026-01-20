@@ -52,5 +52,11 @@ use HasTranslations ;
             }
         });
     }
+
+    public function projects()
+{
+    return $this->belongsToMany(Project::class, 'project_service_v2_s', 'service_v2_id', 'project_id');
+}
+
     
 }

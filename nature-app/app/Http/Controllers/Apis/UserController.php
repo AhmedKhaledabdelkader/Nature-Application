@@ -52,11 +52,18 @@ class UserController extends Controller
            
             if (is_array($result)) {
                 return response()->json([
-                    'status' => 'success',
-                    'message' => 'Login to the system successfully',
-                    'user' => $result['user'],
-                    'token' => $result['token'],
-                ], 200);
+    'status' => 'success',
+    'message' => 'Login to the system successfully',
+    'data' => [
+        'user' => [
+            'id' => $result['user']['id'],
+            'username' => $result['user']['username'],
+        ],
+        'token' => $result['token'],
+        'token_type' => 'Bearer'
+    ]
+], 200);
+
             }
 
             return response()->json([

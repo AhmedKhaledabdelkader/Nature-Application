@@ -99,4 +99,19 @@ public function deleteClient(string $id)
 }
 
 
+
+public function findClient(string $id){
+
+
+
+    return $this->clientSectionRepository->find($id);
+
+
+
+}
+
+
+
+
+
 }

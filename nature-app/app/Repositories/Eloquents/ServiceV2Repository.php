@@ -37,5 +37,46 @@ public function delete(string $id): bool
 }
 
 
+public function getAll($page, $size)
+{
+    return ServiceV2::query()
+        ->select([
+            'id',
+            'name',
+            'tagline',
+            'status',
+            'created_at',
+            'updated_at'
+        ])
+        ->paginate($size, ['*'], 'page', $page);
+}
+
+
+
+public function getAllPublishedServices($page, $size)
+{
+    return ServiceV2::query()
+    ->where('status',true)
+     ->select([
+            'id',
+            'name',
+            'tagline',
+            'status',
+            'created_at',
+            'updated_at'
+        ])
+    ->paginate($size, ['*'], 'page', $page);
+    
+}
+
+public function getAllServicesNames()
+{
+    return ServiceV2::query()
+        ->select(['id', 'name'])
+        ->where('status', true)
+        ->get();
+}
+
+
     
 }

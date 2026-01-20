@@ -28,6 +28,7 @@ public function findCountry(string $id){
 }
 
 
+
    public function all($page, $size)
 {
     return Country::query()

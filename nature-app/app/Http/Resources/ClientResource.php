@@ -30,4 +30,28 @@ class ClientResource extends JsonResource
                 : null,
         ];
     }
+
+    public function allData(): array
+    {
+        return [
+            'id' => $this->id,
+            'name_en' => $this->name_en,
+            'name_ar'=>$this->name_ar,
+            'image' => $this->image,
+            'status'=>$this->status,
+            
+            'createdAt' => $this->created_at
+                ? $this->created_at->format('d/m/Y')
+                : null,
+            'updatedAt' => $this->updated_at
+                ? $this->updated_at->format('d/m/Y')
+                : null,
+
+        ];
+    }
 }
+
+
+
+
+

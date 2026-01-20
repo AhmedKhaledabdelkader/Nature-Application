@@ -19,10 +19,11 @@ return new class extends Migration
             $table->json('overview');
             $table->json('brief') ;
             $table->json('gallery');
-            $table->json('start_date');
-            $table->json('end_date');
-            $table->json("result");
-            $table->json("project_reflected");
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
+            $table->json("results")->nullable();
+            $table->json('metrics')->nullable();
+            $table->boolean('status')->default(true);
             $table->uuid('country_id');
             $table->uuid('city_id');
             $table->foreign('city_id')

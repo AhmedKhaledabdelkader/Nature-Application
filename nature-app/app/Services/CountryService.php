@@ -66,8 +66,9 @@ public function getAllCountries(array $data)
 
 public function getCountryById(string $id)
 {
-    return $this->countryRepository->find($id);
+    return $this->countryRepository->findCountry($id);
 }
+
 
 
 public function updateCountry(string $id, array $data) 

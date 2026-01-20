@@ -31,7 +31,7 @@ class ClientSectionController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Client created successfully',
-            'result' => $clientSection
+            'result' => (new ClientResource($clientSection))->allData()
         ], 201);
 
     }
@@ -50,7 +50,7 @@ public function update(string $id,Request $request){
     return response()->json([
         'status' => 'success',
         'message' => 'Client updated successfully',
-        'result' => $clientSection
+        'result' =>(new ClientResource($clientSection))->allData()
     ], 200);
 
 
@@ -65,7 +65,27 @@ public function index(Request $request){
     return response()->json([
         'status' => 'success',
         'message' => 'Clients retrieved successfully',
-        'result' =>  ClientResource::collection($clients)
+        'result' =>  ClientResource::collection($clients),
+        'page' => $clients->currentPage(),
+        'size' => $clients->perPage(),
+        'total' => $clients->total(),
+        'lastPage' => $clients->lastPage(),
+            ]
+    , 200);
+
+    
+}
+
+
+
+public function show(Request $request,string $id){
+
+    $client = $this->clientSectionService->findClient($id);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Client retrieved successfully',
+        'result' => (new ClientResource($client))->allData()
     ], 200);
 
     
@@ -78,7 +98,11 @@ public function search(Request $request){
     return response()->json([
         'status' => 'success',
         'message' => 'Clients retrieved successfully',
-        'result' =>  ClientResource::collection($clients)
+        'result' =>  ClientResource::collection($clients),
+         'page' => $clients->currentPage(),
+        'size' => $clients->perPage(),
+        'total' => $clients->total(),
+        'lastPage' => $clients->lastPage(),
     ], 200);
 
     

@@ -35,7 +35,6 @@ public function search(string $keyword, int $page, int $size)
     $column = $locale === 'ar' ? 'name_ar' : 'name_en';
 
     return ClientSection::query()
-        ->where('status', true)
         ->where($column, 'LIKE', "{$keyword}%")->latest()
         ->paginate($size, ['*'], 'page', $page);
 }
