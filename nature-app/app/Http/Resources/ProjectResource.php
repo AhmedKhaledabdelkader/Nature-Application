@@ -11,6 +11,18 @@ class ProjectResource extends JsonResource
     {
         $locale = app()->getLocale();
 
+        // Build DTO for organization logos (array of paths)
+        $galleryDto = collect($this->gallery ?? [])
+            ->values()
+            ->map(function ($path, $index) {
+
+                return [
+                    'id'  => $index+1,
+                    'url' => $path,
+                ];
+            });
+
+
         return [
 
             'id' => $this->id,
@@ -34,7 +46,7 @@ class ProjectResource extends JsonResource
             // Images
             'imageBefore' => $this->image_before,
             'imageAfter' => $this->image_after,
-            'gallery' => $this->gallery ?? [],
+            'gallery' => $galleryDto ?? [],
 
 
             // Relations

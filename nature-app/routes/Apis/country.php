@@ -9,7 +9,7 @@ Route::post('/', [CountryController::class, 'store'])->middleware(["validate.cou
 
 Route::get('/{id}', [CountryController::class, 'show'])->middleware("localize");
 
-Route::get('/', [CountryController::class, 'index'])->middleware("validate.pagination","localize");
+Route::get('/', [CountryController::class, 'index'])->middleware("localize");
 
 Route::post('/{id}', [CountryController::class, 'update'])->middleware(["localize","set.locale"]);
 

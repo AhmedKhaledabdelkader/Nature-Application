@@ -307,6 +307,8 @@ public function updateService(array $data, string $id)
     // =========================
     // STEPS
     // =========================
+
+    /*
     if (!empty($data['steps']) && is_array($data['steps'])) {
 
         $existingSteps = $service->steps ?? [];
@@ -317,6 +319,11 @@ public function updateService(array $data, string $id)
             if (!empty($incoming['id'])) {
                 foreach ($existingSteps as &$stored) {
                     if ($stored['id'] === $incoming['id']) {
+
+                    
+
+                    
+                    
 
                         // Merge localized fields
                         $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, $stored);
@@ -367,11 +374,121 @@ public function updateService(array $data, string $id)
         // Save back
         $service->steps = array_values($existingSteps);
     }
+*/
+
+
+
+if (!empty($data['steps']) && is_array($data['steps'])) {
+
+    $existingSteps = $service->steps ?? [];
+
+    foreach ($data['steps'] as $incoming) {
+
+        // UPDATE EXISTING STEP
+        if (!empty($incoming['id'])) {
+            foreach ($existingSteps as $key => &$stored) {
+                if ($stored['id'] === $incoming['id']) {
+
+                    // Delete from specific locale if title/description is null
+                    foreach (['title', 'description'] as $field) {
+                
+                        if (!array_key_exists($field, $incoming)) {
+
+                           
+
+                            if (isset($stored[$field][$locale])) {
+                                unset($stored[$field][$locale]);
+                             }
+    } else {
+        // Field exists → merge/update normally
+        $this->mergeLocalizedFields($incoming, [$field], $locale, $stored);
+    }
+                    }
+
+                    // If after deletion, both title & description have no locales left → delete step completely
+                    $allEmpty = true;
+                    foreach (['title', 'description'] as $field) {
+                        if (!empty($stored[$field])) {
+
+                            $allEmpty = false;
+                            break;
+                        }
+                    }
+
+                    if ($allEmpty) {
+
+                       
+                        // Delete step image using your trait
+                        if (!empty($stored['image'])) {
+                            
+                            echo $stored["image"] ;
+                            $this->deleteFile($stored['image']);
+                           
+                        }
+
+                        // Remove step from existing steps
+                        unset($existingSteps[$key]);
+                    } else {
+                        // Handle image update if step still exists
+                        if (array_key_exists('image', $incoming)) {
+                            $stored['image'] = $this->updateFile(
+                                $incoming['image'],
+                                $stored['image'] ?? null,
+                                'services/steps',
+                                $this->imageConverterService
+                            );
+                        }
+
+                        // Merge back other fields
+                        $stored = array_merge($stored, $incoming);
+                    }
+
+                    break;
+                }
+            }
+            unset($stored);
+        }
+        // CREATE NEW STEP
+        else {
+            $incoming['id'] = Str::uuid()->toString();
+
+            // Localize new step
+            $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, null);
+
+            // Handle image
+            $incoming['image'] = $this->updateFile(
+                $incoming['image'] ?? null,
+                null,
+                'services/steps',
+                $this->imageConverterService
+            );
+
+            $existingSteps[] = $incoming;
+        }
+    }
+
+    // Re-order all steps
+    foreach ($existingSteps as $i => &$step) {
+        $step['order'] = $i + 1;
+    }
+    unset($step);
+
+    $service->steps = array_values($existingSteps);
+}
+
+
+
+
+
+
+
+
+
 
     // =========================
     // BENEFITS
     // =========================
-    if (!empty($data['benefits']) && is_array($data['benefits'])) {
+   if (!empty($data['benefits']) && is_array($data['benefits'])) {
 
         $existingBenefits = $service->benefits ?? [];
 
@@ -459,6 +576,9 @@ public function updateService(array $data, string $id)
         $service->benefits = array_values($existingBenefits);
     }
 
+
+
+
     // =========================
     // VALUES
     // =========================
@@ -510,22 +630,86 @@ public function updateService(array $data, string $id)
     // =========================
     // IMPACTS
     // =========================
-    if (!empty($data['impacts']) && is_array($data['impacts'])) {
+   if (!empty($data['impacts']) && is_array($data['impacts'])) {
 
-        $existingImpacts = $service->impacts ?? [];
+    $existingImpacts = $service->impacts ?? [];
 
-        foreach ($data['impacts'] as $incoming) {
+    foreach ($data['impacts'] as $incoming) {
 
-            // UPDATE EXISTING IMPACT
-            if (!empty($incoming['id'])) {
-                foreach ($existingImpacts as &$stored) {
-                    if ($stored['id'] === $incoming['id']) {
+        // ================= UPDATE EXISTING IMPACT =================
+        if (!empty($incoming['id'])) {
 
-                        // Merge localized fields
-                        $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, $stored);
+            foreach ($existingImpacts as $key => &$stored) {
 
-                        // Handle image update
+                if ($stored['id'] === $incoming['id']) {
+
+                    /*
+                    --------------------------------
+                    Handle localized fields
+                    --------------------------------
+                    */
+
+                    foreach (['title', 'description'] as $field) {
+
+                        // Delete locale
+                        if (!array_key_exists($field, $incoming)) {
+
+                            if (isset($stored[$field][$locale])) {
+                                unset($stored[$field][$locale]);
+                            }
+
+                        } else {
+
+                            // Update locale
+                            $this->mergeLocalizedFields(
+                                $incoming,
+                                [$field],
+                                $locale,
+                                $stored
+                            );
+                        }
+                    }
+
+                    /*
+                    --------------------------------
+                    Check if impact is empty
+                    --------------------------------
+                    */
+
+                    $allEmpty = true;
+
+                    foreach (['title', 'description'] as $field) {
+                        if (!empty($stored[$field])) {
+                            $allEmpty = false;
+                            break;
+                        }
+                    }
+
+                    /*
+                    --------------------------------
+                    Delete IMPACT completely
+                    --------------------------------
+                    */
+
+                    if ($allEmpty) {
+
+                        // Delete image from disk
+                        if (!empty($stored['image'])) {
+                            $this->deleteFile($stored['image']);
+                        }
+
+                        unset($existingImpacts[$key]);
+
+                    } else {
+
+                        /*
+                        --------------------------------
+                        Handle image update
+                        --------------------------------
+                        */
+
                         if (array_key_exists('image', $incoming)) {
+
                             $stored['image'] = $this->updateFile(
                                 $incoming['image'],
                                 $stored['image'] ?? null,
@@ -534,36 +718,46 @@ public function updateService(array $data, string $id)
                             );
                         }
 
-                        // Merge back into stored record
+                        // Merge other fields
                         $stored = array_merge($stored, $incoming);
-
-                        break;
                     }
+
+                    break;
                 }
-                unset($stored);
             }
-            // CREATE NEW IMPACT
-            else {
-                $incoming['id'] = Str::uuid()->toString();
-                
-                // Localize impact fields
-                $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, null);
 
-                // Handle image
-                $incoming['image'] = $this->updateFile(
-                    $incoming['image'] ?? null,
-                    null,
-                    'services/impacts',
-                    $this->imageConverterService
-                );
-
-                $existingImpacts[] = $incoming;
-            }
+            unset($stored);
         }
 
-        // Save back
-        $service->impacts = array_values($existingImpacts);
+        // ================= CREATE NEW IMPACT =================
+        else {
+
+            $incoming['id'] = Str::uuid()->toString();
+
+            // Localize fields
+            $this->mergeLocalizedFields(
+                $incoming,
+                ['title', 'description'],
+                $locale,
+                null
+            );
+
+            // Upload image
+            $incoming['image'] = $this->updateFile(
+                $incoming['image'] ?? null,
+                null,
+                'services/impacts',
+                $this->imageConverterService
+            );
+
+            $existingImpacts[] = $incoming;
+        }
     }
+
+    // Save back
+    $service->impacts = array_values($existingImpacts);
+}
+
 
     // =========================
     // SAVE

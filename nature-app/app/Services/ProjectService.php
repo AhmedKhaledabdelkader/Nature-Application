@@ -142,30 +142,97 @@ class ProjectService
         $project->results = $data['results'];
     }*/
 
-
-     if (!empty($data['results']) && is_array($data['results'])) {
+if (!empty($data['results']) && is_array($data['results'])) {
 
     $existingResults = $project->results ?? [];
 
     foreach ($data['results'] as $incoming) {
 
-        // UPDATE EXISTING RESULT
+        // ================= UPDATE EXISTING RESULT =================
         if (!empty($incoming['id'])) {
-            foreach ($existingResults as &$stored) {
+
+            foreach ($existingResults as $key => &$stored) {
+
                 if ($stored['id'] === $incoming['id']) {
-                    $this->mergeLocalizedFields($incoming, ['section_title', 'section_body'], $locale, $stored);
-                    
-                    // Merge back into stored record
-                    $stored = array_merge($stored, $incoming);
+
+                    /*
+                    --------------------------------
+                    Handle localized fields
+                    --------------------------------
+                    */
+
+                    foreach (['section_title', 'section_body'] as $field) {
+
+                        // Delete locale if field missing
+                        if (!array_key_exists($field, $incoming)) {
+
+                            if (isset($stored[$field][$locale])) {
+                                unset($stored[$field][$locale]);
+                            }
+
+                        } else {
+
+                            // Update locale
+                            $this->mergeLocalizedFields(
+                                $incoming,
+                                [$field],
+                                $locale,
+                                $stored
+                            );
+                        }
+                    }
+
+                    /*
+                    --------------------------------
+                    Check if result is empty
+                    --------------------------------
+                    */
+
+                    $allEmpty = true;
+
+                    foreach (['section_title', 'section_body'] as $field) {
+                        if (!empty($stored[$field])) {
+                            $allEmpty = false;
+                            break;
+                        }
+                    }
+
+                    /*
+                    --------------------------------
+                    Delete RESULT completely
+                    --------------------------------
+                    */
+
+                    if ($allEmpty) {
+
+                        unset($existingResults[$key]);
+
+                    } else {
+
+                        // Merge other fields
+                        $stored = array_merge($stored, $incoming);
+                    }
+
                     break;
                 }
             }
+
             unset($stored);
         }
-        // CREATE NEW RESULT
+
+        // ================= CREATE NEW RESULT =================
         else {
+
             $incoming['id'] = Str::uuid()->toString();
-            $this->mergeLocalizedFields($incoming, ['section_title', 'section_body'], $locale, null);
+
+            // Localize fields
+            $this->mergeLocalizedFields(
+                $incoming,
+                ['section_title', 'section_body'],
+                $locale,
+                null
+            );
+
             $existingResults[] = $incoming;
         }
     }
@@ -178,44 +245,106 @@ class ProjectService
 
 
 
-
-
-
 if (!empty($data['metrics']) && is_array($data['metrics'])) {
 
     $existingMetrics = $project->metrics ?? [];
 
     foreach ($data['metrics'] as $incoming) {
 
-        // UPDATE EXISTING METRIC
+        // ================= UPDATE EXISTING METRIC =================
         if (!empty($incoming['id'])) {
-            foreach ($existingMetrics as &$stored) {
+
+            foreach ($existingMetrics as $key => &$stored) {
+
                 if ($stored['id'] === $incoming['id']) {
 
-                    // Merge localized fields (metric_title)
-                    $this->mergeLocalizedFields($incoming, ['metric_title'], $locale, $stored);
+                    /*
+                    --------------------------------
+                    Handle localized metric_title
+                    --------------------------------
+                    */
 
-                    // Keep non-localized fields
-                    $stored['metric_number'] = $incoming['metric_number'] ?? ($stored['metric_number'] ?? null);
-                    $stored['metric_case']   = $incoming['metric_case'] ?? ($stored['metric_case'] ?? null);
+                    if (!array_key_exists('metric_title', $incoming)) {
 
-                    // Merge back any new locale values
-                    $stored = array_merge($stored, $incoming);
+                        // Delete locale only
+                        if (isset($stored['metric_title'][$locale])) {
+                            unset($stored['metric_title'][$locale]);
+                        }
+
+                    } else {
+
+                        // Update locale
+                        $this->mergeLocalizedFields(
+                            $incoming,
+                            ['metric_title'],
+                            $locale,
+                            $stored
+                        );
+                    }
+
+                    /*
+                    --------------------------------
+                    Check if metric empty
+                    --------------------------------
+                    */
+
+                    $hasLocale = false;
+
+                    if (!empty($stored['metric_title'])) {
+                        $hasLocale = true;
+                    }
+
+                    /*
+                    --------------------------------
+                    Delete metric completely
+                    --------------------------------
+                    */
+
+                    if (!$hasLocale) {
+
+                        unset($existingMetrics[$key]);
+
+                    } else {
+
+                        /*
+                        --------------------------------
+                        Non localized fields
+                        --------------------------------
+                        */
+
+                        if (array_key_exists('metric_number', $incoming)) {
+                            $stored['metric_number'] = $incoming['metric_number'];
+                        }
+
+                        if (array_key_exists('metric_case', $incoming)) {
+                            $stored['metric_case'] = $incoming['metric_case'];
+                        }
+
+                        // Merge back
+                        $stored = array_merge($stored, $incoming);
+                    }
 
                     break;
                 }
             }
-            unset($stored);
 
-        } 
-        // ADD NEW METRIC
+            unset($stored);
+        }
+
+        // ================= CREATE NEW METRIC =================
         else {
+
             $incoming['id'] = Str::uuid()->toString();
 
-            // Localized title
-            $this->mergeLocalizedFields($incoming, ['metric_title'], $locale, null);
+            // Localize title
+            $this->mergeLocalizedFields(
+                $incoming,
+                ['metric_title'],
+                $locale,
+                null
+            );
 
-            // Non-localized fields
+            // Non localized fields
             $incoming['metric_number'] = $incoming['metric_number'] ?? null;
             $incoming['metric_case']   = $incoming['metric_case'] ?? null;
 
@@ -223,7 +352,7 @@ if (!empty($data['metrics']) && is_array($data['metrics'])) {
         }
     }
 
-    // Assign back
+    // Save back
     $project->metrics = array_values($existingMetrics);
 }
 

@@ -39,9 +39,9 @@ public function findCountry(string $id){
 }
 
 
-   public function allCountries($page, $size)
+   public function allCountries()
 {
-    return Country::query()->paginate($size,['*'], 'page', $page);
+    return Country::all();
 }
 
 

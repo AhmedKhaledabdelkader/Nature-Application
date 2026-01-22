@@ -123,7 +123,7 @@ class ServiceResource extends JsonResource
                 'insights' => collect($benefit['insights'] ?? [])
                     ->map(fn ($insight) => [
                         
-                        'id'=>$insight["id"],
+                        'id'=>$insight["id"]??null,
                         'metricTitle' => $this->translateField(
                             $insight['metric_title'] ?? null,
                             $locale

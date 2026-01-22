@@ -31,6 +31,19 @@ class CountryResource extends JsonResource
 
 
 
+    public function onlyIdAndName(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'logo'=>$this->logo
+        ];
+    }
+
+
+
+
+
 
 
 

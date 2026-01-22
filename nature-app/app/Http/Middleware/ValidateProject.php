@@ -57,7 +57,7 @@ class ValidateProject
             'metrics' => ['nullable', 'array','max:3'],
             'metrics.*.metric_title' => ['required', 'string', 'min:2', 'max:400'],
             'metrics.*.metric_number' => ['required', 'string', 'min:1','max:300'],   
-            'metrics.*.metric_case' => ['required', 'string', 'min:2','max:300'], 
+            'metrics.*.metric_case' => ['required', 'string', 'min:2','max:300','in:up,down,stable'], 
 
     'service_ids'   => ['required', 'array'], // must be an array
     'service_ids.*' => ['uuid', 'exists:service_v2_s,id'], // each element must be a valid UUID that exists in services table

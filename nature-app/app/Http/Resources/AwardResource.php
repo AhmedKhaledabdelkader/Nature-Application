@@ -38,7 +38,7 @@ class AwardResource extends JsonResource
             'image' => $this->image??null,
 
           
-            'organizationLogos' => $logosDto,
+            'organizationLogos' => $logosDto??[],
 
             'year' => $this->year,
 

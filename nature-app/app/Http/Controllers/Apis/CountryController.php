@@ -68,12 +68,12 @@ public function show(string $id)
 
 public function index(Request $request)
     {
-        $data=$request->all();
-        $countries = $this->countryService->getAllCountries($data);
+      
+        $countries = $this->countryService->getAllCountries();
         return response()->json([
             'status' => 'success',
             'message' => 'Countries retrieved successfully',
-            'result' => CountryResource::collection($countries),
+            'result' => CountryResource::collection($countries)->map->onlyIdAndName(),
  
         ], 200);
     }
