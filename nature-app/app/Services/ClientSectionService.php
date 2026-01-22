@@ -104,7 +104,14 @@ public function findClient(string $id){
 
 
 
-    return $this->clientSectionRepository->find($id);
+    $client=$this->clientSectionRepository->find($id);
+     
+      if (!$client) {
+        return false;
+    }
+
+    return $client ;
+
 
 
 

@@ -67,6 +67,37 @@ public function index(Request $request){
     
 }
 
+
+public function show(Request $request,string $id){
+
+    $testimonial = $this->testimonialSectionService->findTestimonial($id);
+
+
+    if (!$testimonial) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Testimonial not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Testimonial retrieved successfully',
+        'result' => (new TestimonialResource($testimonial))->allData()
+    ], 200);
+
+    
+}
+
+
+
+
+
+
+
+
+
+
 public function search(Request $request){
 
     $testimonials = $this->testimonialSectionService->searchTestimonialSections($request->all());
@@ -74,7 +105,12 @@ public function search(Request $request){
     return response()->json([
         'status' => 'success',
         'message' => 'testimonials retrieved successfully',
-        'result' =>  TestimonialResource::collection($testimonials)
+        'result' =>  TestimonialResource::collection($testimonials),
+        'page' => $testimonials->currentPage(),
+        'size' => $testimonials->perPage(),
+        'total' => $testimonials->total(),
+        'lastPage' => $testimonials->lastPage(),
+
     ], 200);
 
     

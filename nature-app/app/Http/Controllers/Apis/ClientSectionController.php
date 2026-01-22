@@ -62,6 +62,8 @@ public function index(Request $request){
 
     $clients = $this->clientSectionService->getAllClientSections($request->all());
 
+    
+
     return response()->json([
         'status' => 'success',
         'message' => 'Clients retrieved successfully',
@@ -81,6 +83,14 @@ public function index(Request $request){
 public function show(Request $request,string $id){
 
     $client = $this->clientSectionService->findClient($id);
+
+
+    if (!$client) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Client not found'
+        ], 404);
+    }
 
     return response()->json([
         'status' => 'success',

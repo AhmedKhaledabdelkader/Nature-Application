@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserService
 {
@@ -92,5 +93,30 @@ return "username not found ";
 }
 
 }
+
+
+ public function logoutCurrentDevice(Request $request)
+    {
+        $token = $request->attributes->get('accessToken');
+
+        if ($token) {
+            $token->delete();
+        }
+
+        return ['status'=>'success','message' => 'Logged out from the current device'];
+    }
+
+    /**
+     * Logout from all devices
+     */
+    public function logoutAllDevices($user)
+    {
+        $user->tokens()->delete();
+
+        return ['status'=>'success','message' => 'Logged out from all devices'];
+    }
+
+
+
 
 }

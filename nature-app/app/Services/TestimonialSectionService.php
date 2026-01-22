@@ -58,13 +58,16 @@ public function searchTestimonialSections(array $data)
 {
     $size = $data['size'] ?? 10;
     $page = $data['page'] ?? 1;
-    $key= $data['key'] ?? '';
+    $key= $data['key'] ?? 'client_name';
     $value= $data['value'] ?? '';
 
     return $this->testimonialSectionRepository->search($key,$value, $page, $size);
 
 
 }
+
+
+
 
 
 
@@ -81,6 +84,25 @@ public function deleteTestimonialSection(string $id)
     return $this->testimonialSectionRepository->delete($id);
 }
 
+
+
+
+public function findTestimonial(string $id){
+
+
+
+    $testimonial=$this->testimonialSectionRepository->find($id);
+     
+      if (!$testimonial) {
+        return false;
+    }
+
+    return $testimonial ;
+
+
+
+
+}
 
 
 

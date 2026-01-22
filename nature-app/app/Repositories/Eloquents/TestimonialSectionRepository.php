@@ -39,7 +39,6 @@ public function search(string $key, string $value, int $page, int $size)
 
 
     return TestimonialSection::query()
-        ->where('status', true)
         ->where($column, 'LIKE', "{$value}%")->latest()
         ->paginate($size, ['*'], 'page', $page);
 }

@@ -9,82 +9,116 @@ use Illuminate\Support\Facades\Storage;
 trait HandlesMultipleFileUpload
 {
 
-    public function uploadMultipleFiles(
+public function uploadMultipleFiles(
     ?array $files,
     string $folder,
     ImageConverterService $imageConverterService,
     string $disk = 'private'
 ): array {
+
     if (empty($files) || !is_array($files)) {
         return [];
     }
 
     $paths = [];
 
-    $id=1 ;
     foreach ($files as $file) {
-        $storedPath = $imageConverterService->convertAndStore($file, $folder);
 
-        $paths[] = [
-            "id" => $id++,                   //uniqid(),           // unique identifier for frontend tracking
-            "url" => $storedPath,       // path returned from converter
-        ];
+        if ($file instanceof \Illuminate\Http\UploadedFile) {
+
+            $storedPath = $imageConverterService->convertAndStore($file, $folder);
+
+            $paths[] = $storedPath;
+        }
     }
 
     return $paths;
 }
 
-/**
- * Update multiple files (delete old files and upload new ones)
- */
+
+
 public function updateMultipleFiles(
-    ?array $newFiles,
+    ?array $incomingFiles,
     ?array $oldFiles,
     string $folder,
     ImageConverterService $imageConverterService,
     string $disk = 'private'
-): array {
+):array {
 
-    // If no new files → keep old ones
-    if (empty($newFiles) || !is_array($newFiles)) {
+    // If no input → keep old images
+    if (empty($incomingFiles)) {
         return $oldFiles ?? [];
     }
 
-    // Delete old files ONLY when new files exist
-    if (!empty($oldFiles) && is_array($oldFiles)) {
-        foreach ($oldFiles as $oldFileObj) {
-            if (
-                !empty($oldFileObj['url']) &&
-                Storage::disk($disk)->exists($oldFileObj['url'])
-            ) {
-                Storage::disk($disk)->delete($oldFileObj['url']);
-            }
+    $existingPaths = [];
+    $newUploads = [];
+
+    // Separate strings and files
+    foreach ($incomingFiles as $item) {
+
+        if (is_string($item)) {
+            $existingPaths[] = $item;
+        }
+
+        if ($item instanceof \Illuminate\Http\UploadedFile) {
+            $newUploads[] = $item;
         }
     }
 
-    // Upload new files
-    return $this->uploadMultipleFiles(
-        $newFiles,
+    // Old paths from DB
+    $oldPaths = $oldFiles ?? [];
+
+    // Find removed images
+    $filesToDelete = array_diff($oldPaths, $existingPaths);
+
+   
+
+    // Delete removed
+    foreach ($filesToDelete as $path) {
+
+        if (Storage::disk($disk)->exists($path)) {
+            Storage::disk($disk)->delete($path);
+        }
+
+    
+    }
+
+    // Upload new images
+    $uploadedPaths = $this->uploadMultipleFiles(
+        $newUploads,
         $folder,
         $imageConverterService,
         $disk
     );
+
+    // Merge kept + new
+    return array_values(array_merge(
+        $existingPaths,
+        $uploadedPaths
+    ));
 }
+
+
 
 /**
  * Delete multiple files
  */
+
+ 
 public function deleteMultipleFiles(
-    ?array $files,
+    ?array $paths,
     string $disk = 'private'
 ): bool {
-    if (empty($files) || !is_array($files)) {
+
+    if (empty($paths) || !is_array($paths)) {
         return false;
     }
 
-    foreach ($files as $fileObj) {
-        if (!empty($fileObj['url']) && Storage::disk($disk)->exists($fileObj['url'])) {
-            Storage::disk($disk)->delete($fileObj['url']);
+    foreach ($paths as $path) {
+
+        if (is_string($path) && Storage::disk($disk)->exists($path)) {
+
+            Storage::disk($disk)->delete($path);
         }
     }
 

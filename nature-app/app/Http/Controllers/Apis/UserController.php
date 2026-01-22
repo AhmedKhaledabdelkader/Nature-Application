@@ -73,5 +73,24 @@ class UserController extends Controller
 
     }
 
+
+
+public function logout(Request $request)
+    {
+        $response = $this->userService->logoutCurrentDevice($request);
+        
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Logout from all devices
+     */
+    public function logoutAll(Request $request)
+    {
+        $response = $this->userService->logoutAllDevices($request->user());
+
+        return response()->json($response, 200);
+    }
+
     
 }

@@ -143,7 +143,7 @@ class ProjectService
     }*/
 
 
-        if (!empty($data['results']) && is_array($data['results'])) {
+     if (!empty($data['results']) && is_array($data['results'])) {
 
     $existingResults = $project->results ?? [];
 
@@ -173,6 +173,11 @@ class ProjectService
     // Save back
     $project->results = array_values($existingResults);
 }
+
+
+
+
+
 
 
 
