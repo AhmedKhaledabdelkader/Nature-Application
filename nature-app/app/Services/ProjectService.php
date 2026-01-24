@@ -110,6 +110,8 @@ class ProjectService
     }
 
 
+  
+
     public function updateProject(string $id, array $data)
 {
     $locale = app()->getLocale();
@@ -119,253 +121,170 @@ class ProjectService
         return null;
     }
 
+    // =========================
+    // TOP LEVEL
+    // =========================
     $this->setLocalizedFields($project, $data, ['name', 'overview', 'brief'], $locale);
-
     $this->setUnlocalizedFields($project, $data, ['start_date', 'end_date', 'status']);
 
-    /*
-    
+    // =========================
+    // RESULTS
+    // =========================
     if (!empty($data['results']) && is_array($data['results'])) {
+
         $existingResults = $project->results ?? [];
 
-        foreach ($data['results'] as $i => &$result) {
-            // Get existing result by index to preserve other locales
-            $existingResult = $existingResults[$i] ?? null;
+        foreach ($data['results'] as $incoming) {
 
-            // Merge translations instead of replacing
-            $this->mergeLocalizedFields($result, ['section_title', 'section_body'], $locale, $existingResult);
-        }
+            // ================= UPDATE EXISTING RESULT =================
+            if (!empty($incoming['id'])) {
 
-        unset($result);
+                foreach ($existingResults as $key => &$stored) {
 
-        // Assign back
-        $project->results = $data['results'];
-    }*/
+                    if ($stored['id'] === $incoming['id']) {
 
-if (!empty($data['results']) && is_array($data['results'])) {
+                        // Check if only ID is sent (delete entire locale)
+                        $onlyIdSent = (count($incoming) === 1);
 
-    $existingResults = $project->results ?? [];
+                        if ($onlyIdSent) {
+                            // DELETE all fields for this locale
+                            foreach (['section_title', 'section_body'] as $field) {
+                                if (isset($stored[$field][$locale])) {
+                                    unset($stored[$field][$locale]);
+                                }
+                            }
+                        } else {
+                            // UPDATE ONLY PROVIDED FIELDS, KEEP OTHERS UNCHANGED
 
-    foreach ($data['results'] as $incoming) {
-
-        // ================= UPDATE EXISTING RESULT =================
-        if (!empty($incoming['id'])) {
-
-            foreach ($existingResults as $key => &$stored) {
-
-                if ($stored['id'] === $incoming['id']) {
-
-                    /*
-                    --------------------------------
-                    Handle localized fields
-                    --------------------------------
-                    */
-
-                    foreach (['section_title', 'section_body'] as $field) {
-
-                        // Delete locale if field missing
-                        if (!array_key_exists($field, $incoming)) {
-
-                            if (isset($stored[$field][$locale])) {
-                                unset($stored[$field][$locale]);
+                            // ---------- SECTION_TITLE ----------
+                            if (array_key_exists('section_title', $incoming)) {
+                                $this->mergeLocalizedFields($incoming, ['section_title'], $locale, $stored);
+                                $stored['section_title'] = $incoming['section_title'];
                             }
 
+                            // ---------- SECTION_BODY ----------
+                            if (array_key_exists('section_body', $incoming)) {
+                                $this->mergeLocalizedFields($incoming, ['section_body'], $locale, $stored);
+                                $stored['section_body'] = $incoming['section_body'];
+                            }
+                        }
+
+                        // ---------- CHECK EMPTY RESULT ----------
+                        $allEmpty = true;
+
+                        foreach (['section_title', 'section_body'] as $field) {
+                            if (!empty($stored[$field]) && count($stored[$field]) > 0) {
+                                $allEmpty = false;
+                                break;
+                            }
+                        }
+
+                        if ($allEmpty) {
+                            // Delete result completely
+                            unset($existingResults[$key]);
+                        }
+
+                        break;
+                    }
+                }
+
+                unset($stored);
+            }
+            // ================= CREATE NEW RESULT =================
+            else {
+
+                $incoming['id'] = Str::uuid()->toString();
+
+                // Localize fields
+                $this->mergeLocalizedFields($incoming, ['section_title', 'section_body'], $locale, null);
+
+                $existingResults[] = $incoming;
+            }
+        }
+
+        // Save back
+        $project->results = array_values($existingResults);
+    }
+
+    // =========================
+    // METRICS
+    // =========================
+    if (!empty($data['metrics']) && is_array($data['metrics'])) {
+
+        $existingMetrics = $project->metrics ?? [];
+
+        foreach ($data['metrics'] as $incoming) {
+
+            // ================= UPDATE EXISTING METRIC =================
+            if (!empty($incoming['id'])) {
+
+                foreach ($existingMetrics as $key => &$stored) {
+
+                    if ($stored['id'] === $incoming['id']) {
+
+                        // Check if only ID is sent (delete entire locale)
+                        $onlyIdSent = (count($incoming) === 1);
+
+                        if ($onlyIdSent) {
+                            // DELETE metric_title for this locale
+                            if (isset($stored['metric_title'][$locale])) {
+                                unset($stored['metric_title'][$locale]);
+                            }
                         } else {
+                            // UPDATE ONLY PROVIDED FIELDS, KEEP OTHERS UNCHANGED
 
-                            // Update locale
-                            $this->mergeLocalizedFields(
-                                $incoming,
-                                [$field],
-                                $locale,
-                                $stored
-                            );
+                            // ---------- METRIC_TITLE ----------
+                            if (array_key_exists('metric_title', $incoming)) {
+                                $this->mergeLocalizedFields($incoming, ['metric_title'], $locale, $stored);
+                                $stored['metric_title'] = $incoming['metric_title'];
+                            }
+
+                            // ---------- METRIC_NUMBER ----------
+                            if (array_key_exists('metric_number', $incoming)) {
+                                $stored['metric_number'] = $incoming['metric_number'];
+                            }
+
+                            // ---------- METRIC_CASE ----------
+                            if (array_key_exists('metric_case', $incoming)) {
+                                $stored['metric_case'] = $incoming['metric_case'];
+                            }
                         }
-                    }
 
-                    /*
-                    --------------------------------
-                    Check if result is empty
-                    --------------------------------
-                    */
-
-                    $allEmpty = true;
-
-                    foreach (['section_title', 'section_body'] as $field) {
-                        if (!empty($stored[$field])) {
-                            $allEmpty = false;
-                            break;
+                        // ---------- CHECK EMPTY METRIC ----------
+                        if (empty($stored['metric_title'])) {
+                            // Delete metric completely
+                            unset($existingMetrics[$key]);
                         }
+
+                        break;
                     }
-
-                    /*
-                    --------------------------------
-                    Delete RESULT completely
-                    --------------------------------
-                    */
-
-                    if ($allEmpty) {
-
-                        unset($existingResults[$key]);
-
-                    } else {
-
-                        // Merge other fields
-                        $stored = array_merge($stored, $incoming);
-                    }
-
-                    break;
                 }
+
+                unset($stored);
             }
+            // ================= CREATE NEW METRIC =================
+            else {
 
-            unset($stored);
+                $incoming['id'] = Str::uuid()->toString();
+
+                // Localize title
+                $this->mergeLocalizedFields($incoming, ['metric_title'], $locale, null);
+
+                // Non-localized fields
+                $incoming['metric_number'] = $incoming['metric_number'] ?? null;
+                $incoming['metric_case'] = $incoming['metric_case'] ?? null;
+
+                $existingMetrics[] = $incoming;
+            }
         }
 
-        // ================= CREATE NEW RESULT =================
-        else {
-
-            $incoming['id'] = Str::uuid()->toString();
-
-            // Localize fields
-            $this->mergeLocalizedFields(
-                $incoming,
-                ['section_title', 'section_body'],
-                $locale,
-                null
-            );
-
-            $existingResults[] = $incoming;
-        }
+        // Save back
+        $project->metrics = array_values($existingMetrics);
     }
 
-    // Save back
-    $project->results = array_values($existingResults);
-}
-
-
-
-
-
-if (!empty($data['metrics']) && is_array($data['metrics'])) {
-
-    $existingMetrics = $project->metrics ?? [];
-
-    foreach ($data['metrics'] as $incoming) {
-
-        // ================= UPDATE EXISTING METRIC =================
-        if (!empty($incoming['id'])) {
-
-            foreach ($existingMetrics as $key => &$stored) {
-
-                if ($stored['id'] === $incoming['id']) {
-
-                    /*
-                    --------------------------------
-                    Handle localized metric_title
-                    --------------------------------
-                    */
-
-                    if (!array_key_exists('metric_title', $incoming)) {
-
-                        // Delete locale only
-                        if (isset($stored['metric_title'][$locale])) {
-                            unset($stored['metric_title'][$locale]);
-                        }
-
-                    } else {
-
-                        // Update locale
-                        $this->mergeLocalizedFields(
-                            $incoming,
-                            ['metric_title'],
-                            $locale,
-                            $stored
-                        );
-                    }
-
-                    /*
-                    --------------------------------
-                    Check if metric empty
-                    --------------------------------
-                    */
-
-                    $hasLocale = false;
-
-                    if (!empty($stored['metric_title'])) {
-                        $hasLocale = true;
-                    }
-
-                    /*
-                    --------------------------------
-                    Delete metric completely
-                    --------------------------------
-                    */
-
-                    if (!$hasLocale) {
-
-                        unset($existingMetrics[$key]);
-
-                    } else {
-
-                        /*
-                        --------------------------------
-                        Non localized fields
-                        --------------------------------
-                        */
-
-                        if (array_key_exists('metric_number', $incoming)) {
-                            $stored['metric_number'] = $incoming['metric_number'];
-                        }
-
-                        if (array_key_exists('metric_case', $incoming)) {
-                            $stored['metric_case'] = $incoming['metric_case'];
-                        }
-
-                        // Merge back
-                        $stored = array_merge($stored, $incoming);
-                    }
-
-                    break;
-                }
-            }
-
-            unset($stored);
-        }
-
-        // ================= CREATE NEW METRIC =================
-        else {
-
-            $incoming['id'] = Str::uuid()->toString();
-
-            // Localize title
-            $this->mergeLocalizedFields(
-                $incoming,
-                ['metric_title'],
-                $locale,
-                null
-            );
-
-            // Non localized fields
-            $incoming['metric_number'] = $incoming['metric_number'] ?? null;
-            $incoming['metric_case']   = $incoming['metric_case'] ?? null;
-
-            $existingMetrics[] = $incoming;
-        }
-    }
-
-    // Save back
-    $project->metrics = array_values($existingMetrics);
-}
-
-
-
-
-
-
-
-
-
-   
-   
+    // =========================
+    // IMAGES
+    // =========================
     $project->image_before = $this->updateFile(
         $data['image_before'] ?? null,
         $project->image_before,
@@ -380,9 +299,9 @@ if (!empty($data['metrics']) && is_array($data['metrics'])) {
         $this->imageConverterService
     );
 
-    // ==============================
+    // =========================
     // GALLERY
-    // ==============================
+    // =========================
     $project->gallery = $this->updateMultipleFiles(
         $data['gallery'] ?? null,
         $project->gallery,
@@ -390,24 +309,18 @@ if (!empty($data['metrics']) && is_array($data['metrics'])) {
         $this->imageConverterService
     );
 
-    // ==============================
+    // =========================
     // SYNC SERVICES
-    // ==============================
+    // =========================
     $this->syncRelation($project, 'services', $data['service_ids'] ?? []);
 
-    // ==============================
+    // =========================
     // SAVE
-    // ==============================
+    // =========================
     $project->save();
 
     return $project;
 }
-
-    
-
-
-
-
 
 
     
