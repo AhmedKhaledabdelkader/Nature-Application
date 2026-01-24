@@ -161,7 +161,12 @@ class ServiceResource extends JsonResource
                     $locale
                 ),
 
-                'tools' => $value['tools'] ?? [],
+                 'tools' => $this->translateField(
+                    $value['tools'] ?? null,
+                    $locale
+                ),
+
+            
 
             ])
             ->toArray();

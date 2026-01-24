@@ -106,8 +106,26 @@ public function addService(array $data)
 
             $this->localizeFields($value, ['title', 'description'], $locale);
 
-            // Tools = plain array
-            $value['tools'] = $value['tools'] ?? [];
+             // -------- TOOLS (ARRAY LOCALIZATION) --------
+        if (array_key_exists('tools', $value)) {
+
+            if (!is_array($value['tools'])) {
+                echo "Ahmed2" ;
+                $value['tools'] = [];
+            }
+            
+
+            $value['tools'] = [
+                $locale => $value['tools']
+            ];
+
+        } else {
+           echo "Ahmed4";
+            // Initialize empty localized tools
+            $value['tools'] = [
+                $locale => []
+            ];
+        }
         }
 
         unset($value);
@@ -488,6 +506,7 @@ if (!empty($data['steps']) && is_array($data['steps'])) {
     // =========================
     // BENEFITS
     // =========================
+    
    if (!empty($data['benefits']) && is_array($data['benefits'])) {
 
         $existingBenefits = $service->benefits ?? [];
@@ -579,53 +598,157 @@ if (!empty($data['steps']) && is_array($data['steps'])) {
 
 
 
+
+
     // =========================
     // VALUES
     // =========================
-    if (!empty($data['values']) && is_array($data['values'])) {
+  // VALUES
+// =========================
 
-        $existingValues = $service->values ?? [];
+if (!empty($data['values']) && is_array($data['values'])) {
 
-        foreach ($data['values'] as $incoming) {
+    $existingValues = $service->values ?? [];
 
-            // UPDATE EXISTING VALUE
-            if (!empty($incoming['id'])) {
-                foreach ($existingValues as &$stored) {
-                    if ($stored['id'] === $incoming['id']) {
+    foreach ($data['values'] as $incoming) {
 
-                        // Merge localized fields
-                        $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, $stored);
+        // ================= UPDATE EXISTING VALUE =================
+       
+        if (!empty($incoming['id'])) {
 
-                        // Update tools (non-localized)
-                        if (isset($incoming['tools'])) {
-                            $stored['tools'] = $incoming['tools'];
-                        }
+    foreach ($existingValues as $key => &$stored) {
 
-                        // Merge back into stored record
-                        $stored = array_merge($stored, $incoming);
+        // ================= UPDATE EXISTING VALUE =================
+// ================= UPDATE EXISTING VALUE =================
+if (!empty($incoming['id'])) {
 
-                        break;
+    foreach ($existingValues as $key => &$stored) {
+
+       if (!empty($incoming['id'])) {
+
+    foreach ($existingValues as $key => &$stored) {
+
+       if (!empty($incoming['id'])) {
+
+    foreach ($existingValues as $key => &$stored) {
+
+        if ($stored['id'] === $incoming['id']) {
+
+            // Check if only ID is sent (delete entire locale)
+            $onlyIdSent = (count($incoming) === 1);
+
+            if ($onlyIdSent) {
+                // DELETE all fields for this locale
+                foreach (['title', 'description', 'tools'] as $field) {
+                    if (isset($stored[$field][$locale])) {
+                        unset($stored[$field][$locale]);
                     }
                 }
-                unset($stored);
-            }
-            // CREATE NEW VALUE
-            else {
-                $incoming['id'] = Str::uuid()->toString();
-                
-                // Localize value fields
-                $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, null);
+            } else {
+                // UPDATE ONLY PROVIDED FIELDS, KEEP OTHERS UNCHANGED
 
-                // Set tools
-                $incoming['tools'] = $incoming['tools'] ?? [];
+                // ---------- TITLE ----------
+                if (array_key_exists('title', $incoming)) {
+                    $this->mergeLocalizedFields($incoming, ['title'], $locale, $stored);
+                    $stored['title'] = $incoming['title'];
+                }
+                // If title not provided, keep old value (do nothing)
 
-                $existingValues[] = $incoming;
+                // ---------- DESCRIPTION ----------
+                if (array_key_exists('description', $incoming)) {
+                    $this->mergeLocalizedFields($incoming, ['description'], $locale, $stored);
+                    $stored['description'] = $incoming['description'];
+                }
+                // If description not provided, keep old value (do nothing)
+
+                // ---------- TOOLS ----------
+                if (array_key_exists('tools', $incoming)) {
+                    if (!is_array($incoming['tools'])) {
+                        $incoming['tools'] = [];
+                    }
+
+                    if (!isset($stored['tools']) || !is_array($stored['tools'])) {
+                        $stored['tools'] = [];
+                    }
+
+                    $stored['tools'][$locale] = $incoming['tools'];
+                }
+                // If tools not provided, keep old value (do nothing)
             }
+
+            // ---------- CHECK EMPTY VALUE ----------
+            $allEmpty = true;
+
+            foreach (['title', 'description', 'tools'] as $field) {
+                if (!empty($stored[$field]) && count($stored[$field]) > 0) {
+                    $allEmpty = false;
+                    break;
+                }
+            }
+
+            if ($allEmpty) {
+                // Delete value completely
+                unset($existingValues[$key]);
+            }
+
+            break;
         }
-
-        // Save back
-        $service->values = array_values($existingValues);
     }
+
+    unset($stored);
+}
+    }
+
+    unset($stored);
+}
+    }
+
+    unset($stored);
+}
+
+
+
+    }
+
+    unset($stored);
+}
+
+        // ================= CREATE NEW VALUE =================
+        else {
+
+            $incoming['id'] = Str::uuid()->toString();
+
+            // Localize title & description
+            $this->mergeLocalizedFields($incoming, ['title', 'description'], $locale, null);
+
+            // ---------- TOOLS ----------
+            if (array_key_exists('tools', $incoming)) {
+
+                if (!is_array($incoming['tools'])) {
+                    $incoming['tools'] = [];
+                }
+
+                $incoming['tools'] = [
+                    $locale => $incoming['tools']
+                ];
+
+            } else {
+
+                $incoming['tools'] = [
+                    $locale => []
+                ];
+            }
+
+            $existingValues[] = $incoming;
+        }
+    }
+
+    // Re-index array
+    $service->values = array_values($existingValues);
+}
+
+
+
 
     // =========================
     // IMPACTS
