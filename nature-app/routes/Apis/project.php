@@ -13,7 +13,7 @@ Route::post('/', [ProjectController::class, 'store'])->middleware(["validate.pro
 Route::post('/{id}', [ProjectController::class, 'update'])->middleware(["localize","set.locale"]);
 
 
-Route::get('/', [ProjectController::class, 'index'])->middleware("validate.pagination","localize");
+Route::get('/', [ProjectController::class, 'search'])->middleware("validate.pagination","localize");
 
 
 Route::get('/{id}', [ProjectController::class, 'show'])->middleware(["localize"]);

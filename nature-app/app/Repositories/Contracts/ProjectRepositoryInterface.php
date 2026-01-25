@@ -16,6 +16,6 @@ interface ProjectRepositoryInterface
 
     public function delete(string $id) ;
 
-   
+   public function search(string $key, string $value, int $page, int $size);
 
 }

@@ -12,6 +12,7 @@ use App\Repositories\Contracts\CountryRepositoryInterface;
 use App\Repositories\Contracts\ProjectMetricRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Repositories\Contracts\ProvidedServiceRepositoryInterface;
+use App\Repositories\Contracts\SectionRepositoryInterface;
 use App\Repositories\Contracts\ServiceV2RepositoryInterface;
 use App\Repositories\Contracts\SponsorRepositoryInterface;
 use App\Repositories\Contracts\StepRepositoryInterface;
@@ -26,6 +27,7 @@ use App\Repositories\Eloquents\CountryRepository;
 use App\Repositories\Eloquents\ProjectMetricRepository;
 use App\Repositories\Eloquents\ProjectRepository;
 use App\Repositories\Eloquents\ProvidedServiceRepository;
+use App\Repositories\Eloquents\SectionRepository;
 use App\Repositories\Eloquents\ServiceV2Repository;
 use App\Repositories\Eloquents\SponsorRepository;
 use App\Repositories\Eloquents\StepRepository;
@@ -130,6 +132,13 @@ $this->app->bind(
     ServiceV2RepositoryInterface::class,
     ServiceV2Repository::class
 );
+
+
+$this->app->bind(
+    SectionRepositoryInterface::class,
+    SectionRepository::class
+);
+
 
         
     }

@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
              'validate.user'=>\App\Http\Middleware\ValidateUser::class,
              'validate.userAuth'=>\App\Http\Middleware\ValidateUserAuth::class,
              'validate.testimonial'=>\App\Http\Middleware\ValidateTestimonial::class,
+             'validate.section'=>\App\Http\Middleware\ValidateSection::class,
               'auth.user'=> \App\Http\Middleware\AuthenticationMiddleware::class,
               'admin.user'=>\App\Http\Middleware\AdminMiddleware::class,
                'set.locale'=>\App\Http\Middleware\SetLocale::class,

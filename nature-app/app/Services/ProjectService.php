@@ -342,5 +342,23 @@ class ProjectService
 
         return $this->projectRepository->delete($id);
     }
+
+
+
+public function searchProject(array $data)
+{
+    $size = $data['size'] ?? 10;
+    $page = $data['page'] ?? 1;
+    $key= $data['key'] ?? 'name';
+    $value= $data['value'] ?? '';
+
+
+    return $this->projectRepository->search($key,$value, $page, $size);
+
+
+}
+
+
+
 }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectSearchResource;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 
@@ -125,7 +126,25 @@ class ProjectController extends Controller
 
 
 
+public function search(Request $request){
 
+    $projects = $this->projectService->searchProject($request->all());
+
+     $projects->load(['city', 'country','services']);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'projects retrieved successfully',
+        'result' =>  (ProjectSearchResource::collection($projects)),
+        'page' => $projects->currentPage(),
+        'size' => $projects->perPage(),
+        'total' => $projects->total(),
+        'lastPage' => $projects->lastPage(),
+
+    ], 200);
+
+    
+}
 
     
 }
