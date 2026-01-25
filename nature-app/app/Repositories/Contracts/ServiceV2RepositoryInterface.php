@@ -13,7 +13,7 @@ interface ServiceV2RepositoryInterface
 
      public function getAll($page, $size) ;
 
-     public function getAllPublishedServices($page,$size);
+    public function search(string $key, string $value, int $page, int $size);
 
      public function getAllServicesNames() ;
 

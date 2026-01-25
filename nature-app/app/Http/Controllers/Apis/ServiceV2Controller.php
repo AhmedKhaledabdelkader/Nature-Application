@@ -112,9 +112,9 @@ public function destroy($id)
 
 
 
-    public function indexPublishedServices(Request $request)
+    public function indexSearchServices(Request $request)
 {
-    $services = $this->serviceV2Service->getAllPublishedServices($request->all());
+    $services = $this->serviceV2Service->getAllSearchServices($request->all());
 
     return response()->json([
         'status' => 'success',

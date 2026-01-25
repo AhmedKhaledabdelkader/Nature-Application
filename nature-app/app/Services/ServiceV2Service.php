@@ -110,7 +110,7 @@ public function addService(array $data)
         if (array_key_exists('tools', $value)) {
 
             if (!is_array($value['tools'])) {
-                echo "Ahmed2" ;
+              
                 $value['tools'] = [];
             }
             
@@ -120,7 +120,7 @@ public function addService(array $data)
             ];
 
         } else {
-           echo "Ahmed4";
+           
             // Initialize empty localized tools
             $value['tools'] = [
                 $locale => []
@@ -863,12 +863,15 @@ public function getAllServices(array $data){
 
 }
 
-public function getAllPublishedServices(array $data){
+public function getAllSearchServices(array $data){
 
  $size = $data['size'] ?? 10;
- $page = $data['page'] ?? 1;
+    $page = $data['page'] ?? 1;
+    $key= $data['key'] ?? 'name';
+    $value= $data['value'] ?? '';
 
- return $this->serviceV2Repository->getAllPublishedServices($page,$size) ;
+
+ return $this->serviceV2Repository->search($key,$value, $page, $size) ;
 
 
 }

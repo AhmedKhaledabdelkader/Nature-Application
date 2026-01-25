@@ -14,11 +14,33 @@ class SimpleServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+     // ================= LOCALE COMPLETE CHECK =================
+        $locales = ['ar', 'en'];
+        $localeComplete = [];
+        
+        foreach ($locales as $loc) {
+            // Get translations for each field
+            $nameTranslations = $this->getTranslations('name');
+            $taglineTranslations = $this->getTranslations('tagline');
+        
+            
+            // Check if all required fields have translations for this locale
+            $serviceComplete = 
+                !empty($nameTranslations[$loc] ?? null) &&
+                !empty($taglineTranslations[$loc] ?? null) ;
+               
+             $localeComplete[$loc] = $serviceComplete;
+
+        }
+
+
           return [
             'id' => $this->id,
             'name' => $this->name,
             'tagline' => $this->tagline,
             'status'=>$this->status,
+            'localeComplete' => $localeComplete,
             'createdAt' => $this->created_at
                 ? $this->created_at->format('d/m/Y')
                 : null,

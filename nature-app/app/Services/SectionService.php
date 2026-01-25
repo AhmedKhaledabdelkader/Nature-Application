@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\Contracts\SectionRepositoryInterface;
 use App\Traits\HandlesLocalization;
+use App\Traits\HandlesUnlocalized;
 use App\Traits\LocalizesData;
 use Psy\Util\Str;
 
@@ -12,7 +13,7 @@ class SectionService
 
     public $sectionRepository ;
 
-    use LocalizesData,HandlesLocalization ;
+    use LocalizesData,HandlesLocalization,HandlesUnlocalized ;
 
 
     public function __construct(SectionRepositoryInterface $sectionRepository)
@@ -109,6 +110,10 @@ public function updateSectionWithSubsections(array $data, string $id)
 
    
     $this->setLocalizedFields($section, $data, ['name', 'tagline'], $locale);
+
+    $this->setUnlocalizedFields($section, $data, ['subsection_publish','subsections_publish_locales']);
+
+
     $section->save();
 
    

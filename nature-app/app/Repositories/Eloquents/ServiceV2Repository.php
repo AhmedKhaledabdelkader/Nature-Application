@@ -53,19 +53,23 @@ public function getAll($page, $size)
 
 
 
-public function getAllPublishedServices($page, $size)
+public function search(string $key, string $value, int $page, int $size)
 {
+    $allowedKeys = ['name','tagline'];
+
+    if (!in_array($key, $allowedKeys)) {
+        abort(400, 'Invalid search key');
+    }
+
+    $locale = app()->getLocale(); // ar or en
+
     return ServiceV2::query()
-    ->where('status',true)
-     ->select([
-            'id',
-            'name',
-            'tagline',
-            'status',
-            'created_at',
-            'updated_at'
-        ])
-    ->paginate($size, ['*'], 'page', $page);
+        ->whereRaw(
+            "JSON_UNQUOTE(JSON_EXTRACT($key, '$.$locale')) LIKE ?",
+            ["{$value}%"]
+        )
+        ->latest()
+        ->paginate($size, ['*'], 'page', $page);
     
 }
 

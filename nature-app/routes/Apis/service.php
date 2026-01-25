@@ -15,9 +15,9 @@ Route::post('/{id}', [ServiceV2Controller::class, 'update'])->middleware(["local
 
 Route::delete('/{id}', [ServiceV2Controller::class, 'destroy']);
 
-Route::get('/', [ServiceV2Controller::class, 'index'])->middleware(["validate.pagination","localize"]);
+//Route::get('/', [ServiceV2Controller::class, 'index'])->middleware(["validate.pagination","localize"]);
 
-Route::get('/published-services', [ServiceV2Controller::class, 'indexPublishedServices'])->middleware(["validate.pagination","localize"]);
+Route::get('/', [ServiceV2Controller::class, 'indexSearchServices'])->middleware(["validate.pagination","localize"]);
 
 
 

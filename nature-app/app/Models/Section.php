@@ -33,7 +33,9 @@ use HasTranslations ;
     protected $casts = [
     'name' => 'array',
     'tagline' => 'array',
+     'subsections_publish_locales' => 'array',
 ];
+
 
 
 
